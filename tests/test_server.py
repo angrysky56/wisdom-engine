@@ -287,6 +287,7 @@ class TestApplyViaNegativa:
             result = await _call_tool(client, "apply_via_negativa", {
                 "surface_symptom": "Database errors",
                 "hypotheses": hypotheses,
+                "known_constraints": ["Energy is conserved"],
             })
 
         surviving_ids = {h["id"] for h in result["surviving_hypotheses"]}
@@ -306,7 +307,6 @@ class TestApplyViaNegativa:
                 "surface_symptom": "Database errors",
             })
         hypotheses = gen_result["hypotheses"]
-        narr_id = next(h["id"] for h in hypotheses if h["type"] == "narrative")
         mech_id = next(h["id"] for h in hypotheses if h["type"] == "mechanism")
 
         filter_responses = [
@@ -330,6 +330,7 @@ class TestApplyViaNegativa:
             result = await _call_tool(client, "apply_via_negativa", {
                 "surface_symptom": "Database errors",
                 "hypotheses": hypotheses,
+                "known_constraints": ["Resources are finite"],
             })
 
         surviving_types = {h["type"] for h in result["surviving_hypotheses"]}
@@ -440,6 +441,32 @@ class TestSynthesizeTruth:
 
         assert result["confidence"] == 0.0
         assert "Gather more evidence" in result["next_steps"]
+
+
+# ---------------------------------------------------------------------------
+# Backend-unavailable test (fail loudly, no fabricated results)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+class TestNoBackendAvailable:
+    async def test_tool_errors_when_no_llm_backend(self, monkeypatch):
+        """Client without sampling + no OpenRouter key + no Ollama → clear error."""
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+        # Point Ollama probe at a dead port so a locally running Ollama
+        # can't make this test pass by accident.
+        monkeypatch.setenv("OLLAMA_HOST", "http://127.0.0.1:9")
+
+        async with create_connected_server_and_client_session(
+            server=wisdom_mcp,
+            read_timeout_seconds=timedelta(seconds=10),
+        ) as client:  # no sampling_callback → no sampling capability
+            result = await client.call_tool("generate_hypotheses", {
+                "surface_symptom": "Database errors",
+            })
+
+        assert result.isError
+        text = result.content[0].text
+        assert "No LLM backend available" in text
 
 
 # ---------------------------------------------------------------------------

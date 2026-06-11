@@ -7,9 +7,11 @@ import json
 import pytest
 
 from wisdom_engine.engine import (
+    PipelineError,
     _parse_json_response,
     _build_hypothesis,
     apply_via_negativa,
+    generate_hypotheses,
     unroll_depths,
 )
 from wisdom_engine.models import Hypothesis, HypothesisType
@@ -33,6 +35,10 @@ class TestParseJsonResponse:
         raw = '```\n{"key": "value"}\n```'
         result = _parse_json_response(raw)
         assert result == {"key": "value"}
+
+    def test_malformed_json_raises_pipeline_error(self):
+        with pytest.raises(PipelineError, match="malformed JSON"):
+            _parse_json_response("I think the answer is probably yes.")
 
 
 # ---------------------------------------------------------------------------
@@ -102,7 +108,8 @@ class TestUnrollDepths:
         assert result[0].d3_invariant == "extracted invariant"
         assert result[0].evidence == ["ev1"]
 
-    async def test_handles_llm_failure(self):
+    async def test_llm_failure_raises(self):
+        """Fail loudly: a broken LLM must never produce placeholder depth."""
         h = Hypothesis(
             id="test_1",
             text="Will fail",
@@ -113,9 +120,24 @@ class TestUnrollDepths:
         async def mock_llm(prompt: str) -> str:
             raise RuntimeError("LLM down")
 
-        result = await unroll_depths(mock_llm, [h])
-        assert result[0].d2_mechanism == "[unroll failed]"
-        assert result[0].d3_invariant == "[unroll failed]"
+        with pytest.raises(PipelineError, match="Depth unroll failed"):
+            await unroll_depths(mock_llm, [h])
+
+
+# ---------------------------------------------------------------------------
+# generate_hypotheses fail-loud tests
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+class TestGenerateHypothesesFailLoud:
+    async def test_llm_failure_raises_no_placeholders(self):
+        """A dead LLM must raise — never fabricate '[Generation failed]' hypotheses."""
+
+        async def mock_llm(prompt: str) -> str:
+            raise RuntimeError("sampling not supported")
+
+        with pytest.raises(PipelineError, match="Hypothesis generation failed"):
+            await generate_hypotheses(mock_llm, "symptom")
 
 
 # ---------------------------------------------------------------------------
@@ -162,7 +184,10 @@ class TestApplyViaNegativa:
             call_count += 1
             return json.dumps(responses[idx])
 
-        result = await apply_via_negativa(mock_llm, "symptom", hypotheses)
+        result = await apply_via_negativa(
+            mock_llm, "symptom", hypotheses,
+            known_constraints=["Resources are finite"],
+        )
 
         surviving_ids = [h.id for h in result.surviving_hypotheses]
         assert "mech_1" in surviving_ids
@@ -201,7 +226,10 @@ class TestApplyViaNegativa:
             call_count += 1
             return json.dumps(responses[idx])
 
-        result = await apply_via_negativa(mock_llm, "symptom", hypotheses)
+        result = await apply_via_negativa(
+            mock_llm, "symptom", hypotheses,
+            known_constraints=["Energy is conserved"],
+        )
 
         surviving_ids = [h.id for h in result.surviving_hypotheses]
         assert "mech_1" in surviving_ids
@@ -239,7 +267,10 @@ class TestApplyViaNegativa:
             call_count += 1
             return json.dumps(responses[idx])
 
-        result = await apply_via_negativa(mock_llm, "symptom", hypotheses)
+        result = await apply_via_negativa(
+            mock_llm, "symptom", hypotheses,
+            known_constraints=["Resources are finite"],
+        )
 
         surviving_ids = [h.id for h in result.surviving_hypotheses]
         assert "mech_1" in surviving_ids
@@ -273,8 +304,6 @@ class TestApplyViaNegativa:
 
         call_count = 0
         responses = [
-            {"violates": False, "which_constraint": "none", "reasoning": "OK"},
-            {"violates": False, "which_constraint": "none", "reasoning": "OK"},
             {"degenerating": False, "reasoning": "OK"},
             {"degenerating": False, "reasoning": "OK"},
         ]
@@ -289,69 +318,42 @@ class TestApplyViaNegativa:
         # Both survive — no mechanism to trigger collider
         assert len(result.surviving_hypotheses) == 2
 
-    async def test_prover_eliminates_formalizable_hypothesis(self):
-        """When a prover_call is provided and the constraint is formalizable,
-        Stage A should use it instead of the LLM."""
+    async def test_stage_a_skipped_without_constraints(self):
+        """No constraints → no Stage A LLM calls (no hallucinated violations)."""
         hypotheses = [
             Hypothesis(
-                id="mech_1", text="Valid mechanism", h_type=HypothesisType.MECHANISM,
-                d1_symptom="symptom", d2_mechanism="mech A", d3_invariant="all x (P(x) -> Q(x))",
-            ),
-            Hypothesis(
-                id="bad_1", text="Violates constraint", h_type=HypothesisType.CONSTRAINT,
-                d1_symptom="symptom", d2_mechanism="bad", d3_invariant="exists x (P(x) and not Q(x))",
+                id="mech_1", text="Mechanism A", h_type=HypothesisType.MECHANISM,
+                d1_symptom="symptom", d2_mechanism="mech A", d3_invariant="law A",
             ),
         ]
 
-        async def mock_llm(prompt: str) -> str:
-            # LLM should NOT be called for constraint checks when prover is available
-            raise RuntimeError("LLM should not be called for formalizable constraints")
-
-        async def mock_prover(premises: list[str], conclusion: str) -> dict:
-            # The bad hypothesis's invariant contradicts the constraint
-            if "not Q" in conclusion or "not Q" in str(premises):
-                return {"proved": True, "reasoning": "Contradiction found"}
-            return {"proved": False}
-
-        result = await apply_via_negativa(
-            mock_llm, "symptom", hypotheses,
-            known_constraints=["all x (P(x) -> Q(x))"],
-            prover_call=mock_prover,
-        )
-
-        surviving_ids = [h.id for h in result.surviving_hypotheses]
-        assert "mech_1" in surviving_ids
-        assert "bad_1" not in surviving_ids
-
-        quarantined = [e for e in result.elimination_log if e.reason == "quarantined"]
-        assert len(quarantined) == 1
-        assert "Formal proof" in quarantined[0].detail
-
-    async def test_prover_fallback_to_llm(self):
-        """When prover fails or constraint is not formalizable, fall back to LLM."""
-        hypotheses = [
-            Hypothesis(
-                id="h_1", text="Vague hypothesis", h_type=HypothesisType.MECHANISM,
-                d1_symptom="symptom", d2_mechanism="mech", d3_invariant="things generally work this way",
-            ),
-        ]
+        prompts_seen: list[str] = []
 
         async def mock_llm(prompt: str) -> str:
-            return json.dumps({
-                "violates": False,
-                "which_constraint": "none",
-                "reasoning": "Cannot formalize — LLM judgment",
-            })
+            prompts_seen.append(prompt)
+            return json.dumps({"degenerating": False, "reasoning": "OK"})
 
-        async def mock_prover(premises: list[str], conclusion: str) -> dict:
-            # Prover can't handle vague statements
-            raise RuntimeError("Cannot parse vague invariant")
-
-        result = await apply_via_negativa(
-            mock_llm, "symptom", hypotheses,
-            known_constraints=["some domain knowledge"],
-            prover_call=mock_prover,
-        )
+        result = await apply_via_negativa(mock_llm, "symptom", hypotheses)
 
         assert len(result.surviving_hypotheses) == 1
-        assert result.surviving_hypotheses[0].id == "h_1"
+        # Only the Stage B Lakatos check should have run
+        assert len(prompts_seen) == 1
+        assert "DEGENERATING" in prompts_seen[0]
+
+    async def test_llm_failure_raises_not_survives(self):
+        """Fail loudly: a dead LLM must raise, never let everything 'survive'."""
+        hypotheses = [
+            Hypothesis(
+                id="mech_1", text="Mechanism A", h_type=HypothesisType.MECHANISM,
+                d1_symptom="symptom", d2_mechanism="mech A", d3_invariant="law A",
+            ),
+        ]
+
+        async def mock_llm(prompt: str) -> str:
+            raise RuntimeError("sampling not supported by client")
+
+        with pytest.raises(PipelineError):
+            await apply_via_negativa(
+                mock_llm, "symptom", hypotheses,
+                known_constraints=["Resources are finite"],
+            )

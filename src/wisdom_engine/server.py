@@ -5,24 +5,28 @@ Tools:
   apply_via_negativa    — Run the subtraction engine (constraint check + Bayesian collider)
   synthesize_truth      — Compress surviving hypotheses into actionable output
 
-LLM calls are made via MCP sampling: the server borrows the connected client's
-LLM through ctx.session.create_message(). No API keys, no external modules.
+LLM backend chain (first available wins):
+  1. MCP sampling — only if the client declared the sampling capability
+  2. OpenRouter   — when OPENROUTER_API_KEY is set
+  3. Ollama       — when a local Ollama server is reachable
+
+If none is available, tools fail loudly with a clear error instead of
+returning fabricated results.
 """
 
 from __future__ import annotations
 
 import json
 import logging
-from typing import Any
 
 from mcp.server.fastmcp import Context, FastMCP
-from mcp.types import SamplingMessage, TextContent
 
 from .engine import (
     apply_via_negativa as _engine_apply_via_negativa,
     generate_hypotheses as _engine_generate_hypotheses,
     synthesize_truth as _engine_synthesize_truth,
 )
+from .llm import resolve_llm_call
 from .models import (
     EliminationRecord,
     FilterResult,
@@ -38,37 +42,6 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 logger = logging.getLogger("wisdom_engine")
-
-
-# ---------------------------------------------------------------------------
-# MCP Sampling bridge
-# ---------------------------------------------------------------------------
-
-def _make_llm_call(ctx: Context) -> Any:
-    """Create an async llm_call callable that uses MCP sampling.
-
-    Returns an ``async def llm_call(prompt: str) -> str`` that sends
-    the prompt to the connected MCP client via ``create_message`` and
-    returns the text response.
-    """
-
-    async def llm_call(prompt: str) -> str:
-        result = await ctx.session.create_message(
-            messages=[
-                SamplingMessage(
-                    role="user",
-                    content=TextContent(type="text", text=prompt),
-                )
-            ],
-            max_tokens=4096,
-        )
-        # Extract text from response content
-        if isinstance(result.content, TextContent):
-            return result.content.text
-        # Fallback: content might be ImageContent or AudioContent
-        return str(result.content)
-
-    return llm_call
 
 
 # ---------------------------------------------------------------------------
@@ -132,22 +105,25 @@ async def generate_hypotheses(
 
     Fans out to mechanism, narrative, and constraint perspectives to produce
     hypotheses with recursive depth mapping (d1 symptom → d2 mechanism →
-    d3 invariant). Uses MCP sampling to call the connected client's LLM.
+    d3 invariant). Uses the first available LLM backend
+    (MCP sampling → OpenRouter → Ollama).
 
     Args:
         surface_symptom: The observation, problem, or claim to explain.
         context: Supporting context from research agents.
 
     Returns:
-        JSON with hypotheses array, each containing id, text, type, d1/d2/d3.
+        JSON with hypotheses array, each containing id, text, type, d1/d2/d3,
+        and the llm_backend that produced them.
     """
-    llm_call = _make_llm_call(ctx)
+    llm_call, backend = await resolve_llm_call(ctx)
     hypotheses = await _engine_generate_hypotheses(
         llm_call, surface_symptom, context
     )
     return json.dumps(
         {
             "surface_symptom": surface_symptom,
+            "llm_backend": backend,
             "hypotheses": [_hypothesis_to_dict(h) for h in hypotheses],
         },
         indent=2,
@@ -165,11 +141,14 @@ async def apply_via_negativa(
 
     Three elimination stages:
     A. Constraint check — does the hypothesis violate known constraints?
+       (Skipped when no known_constraints are provided.)
     B. Lakatosian cut — does it require ad hoc defenses (degenerating program)?
     C. Bayesian collider — is there a stronger mechanism that explains away
        competing narratives sharing the same symptom?
 
-    Uses MCP sampling to call the connected client's LLM for each stage.
+    Uses the first available LLM backend (MCP sampling → OpenRouter → Ollama).
+    Fails loudly if a stage's LLM call fails — a check that did not run
+    never counts as a check that passed.
 
     Args:
         surface_symptom: The original observation being explained.
@@ -194,11 +173,13 @@ async def apply_via_negativa(
         for h_dict in hypotheses
     ]
 
-    llm_call = _make_llm_call(ctx)
+    llm_call, backend = await resolve_llm_call(ctx)
     result = await _engine_apply_via_negativa(
         llm_call, surface_symptom, hypo_objects, known_constraints
     )
-    return json.dumps(_filter_result_to_dict(result), indent=2)
+    out = _filter_result_to_dict(result)
+    out["llm_backend"] = backend
+    return json.dumps(out, indent=2)
 
 
 @mcp.tool()
@@ -210,7 +191,8 @@ async def synthesize_truth(
 
     Takes the output of apply_via_negativa and produces a compressed,
     actionable synthesis with confidence score and next steps.
-    Uses MCP sampling to call the connected client's LLM.
+    Uses the first available LLM backend (MCP sampling → OpenRouter → Ollama).
+    Confidence is structural (survival rate), never LLM self-report.
 
     Args:
         filter_result: The dict output from apply_via_negativa.
@@ -219,7 +201,7 @@ async def synthesize_truth(
         JSON with actionable_truth, confidence, next_steps,
         remaining_uncertainties.
     """
-    llm_call = _make_llm_call(ctx)
+    llm_call, backend = await resolve_llm_call(ctx)
 
     # Reconstruct FilterResult from dict
     all_h = [
@@ -268,6 +250,7 @@ async def synthesize_truth(
     )
 
     result = await _engine_synthesize_truth(llm_call, fr)
+    result["llm_backend"] = backend
     return json.dumps(result, indent=2)
 
 
@@ -275,8 +258,40 @@ async def synthesize_truth(
 # Entry point
 # ---------------------------------------------------------------------------
 def main() -> None:
-    """Start the wisdom-engine MCP server."""
-    mcp.run()
+    """Start the wisdom-engine MCP server.
+
+    Configuration precedence: OS environment variables always win;
+    a .env file (searched from the working directory upward, i.e. the
+    project root when launched via ``uv --directory ... run``) fills in
+    anything not already set. Keep secrets like OPENROUTER_API_KEY in
+    the OS environment; .env is for non-secret settings (model, host).
+
+    Transport (via WISDOM_TRANSPORT): "stdio" (default) — client spawns
+    the process; or "streamable-http" — long-running shared server on
+    WISDOM_HTTP_HOST:WISDOM_HTTP_PORT (default 127.0.0.1:8765, /mcp).
+    """
+    import os
+
+    from dotenv import find_dotenv, load_dotenv
+
+    load_dotenv(find_dotenv(usecwd=True), override=False)
+
+    transport = os.environ.get("WISDOM_TRANSPORT", "stdio").strip().lower()
+    if transport == "stdio":
+        mcp.run()
+    elif transport == "streamable-http":
+        mcp.settings.host = os.environ.get("WISDOM_HTTP_HOST", "127.0.0.1")
+        mcp.settings.port = int(os.environ.get("WISDOM_HTTP_PORT", "8765"))
+        logger.info(
+            "Serving streamable HTTP at http://%s:%s/mcp",
+            mcp.settings.host, mcp.settings.port,
+        )
+        mcp.run(transport="streamable-http")
+    else:
+        raise ValueError(
+            f"Unknown WISDOM_TRANSPORT {transport!r}: "
+            "use 'stdio' or 'streamable-http'"
+        )
 
 
 if __name__ == "__main__":

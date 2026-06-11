@@ -6,12 +6,11 @@ Implements the epistemic filtering pipeline:
   3. Subtraction via constraint checks + Bayesian explaining-away
   4. Synthesis of surviving hypotheses
 
-Stage A (constraint check) uses a dual path:
-  - Formalizable constraints (logical consistency, quantitative bounds) are verified
-    via mcp-logic's prove/find_counterexample — this is the "emergency brake"
-    that cannot be sweet-talked.
-  - Non-formalizable constraints (domain knowledge, heuristic bounds) fall back
-    to LLM judgment.
+Failure semantics: FAIL LOUDLY. Every stage that needs the LLM raises
+``PipelineError`` if the call fails. A hypothesis is never allowed to
+"survive" a check that did not actually run — silent failures would
+let the engine fabricate high-confidence results from no reasoning at
+all, which is exactly the confabulation this engine exists to prevent.
 
 Stage C (Bayesian collider) is intentionally asymmetric: mechanisms can explain
 away narratives, but not the reverse. This is a design opinion: the filter is
@@ -22,11 +21,10 @@ relying on a narrative hypothesis to survive. Documented, not hidden.
 
 from __future__ import annotations
 
-import json
 import asyncio
+import json
 import logging
 import uuid
-from typing import Any
 
 from .models import (
     EliminationRecord,
@@ -34,8 +32,14 @@ from .models import (
     Hypothesis,
     HypothesisType,
 )
+from .llm import LLMCall
 
 logger = logging.getLogger("wisdom_engine")
+
+
+class PipelineError(RuntimeError):
+    """A pipeline stage failed — results would be invalid, so we stop."""
+
 
 # ---------------------------------------------------------------------------
 # Perspective prompts for hypothesis generation
@@ -102,8 +106,12 @@ Respond in JSON:
 }}"""
 
 
-def _parse_json_response(raw: str) -> dict[str, Any]:
-    """Parse JSON from an LLM response, handling markdown code fences."""
+def _parse_json_response(raw: str) -> dict:
+    """Parse JSON from an LLM response, handling markdown code fences.
+
+    Raises:
+        PipelineError: if the response is not valid JSON.
+    """
     text = raw.strip()
     if text.startswith("```"):
         lines = text.split("\n")
@@ -111,13 +119,18 @@ def _parse_json_response(raw: str) -> dict[str, Any]:
         if lines and lines[-1].strip() == "```":
             lines = lines[:-1]  # Remove closing ```
         text = "\n".join(lines)
-    return json.loads(text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as e:
+        raise PipelineError(
+            f"LLM returned malformed JSON ({e}). First 200 chars: {raw[:200]!r}"
+        ) from e
 
 
 def _build_hypothesis(
     h_id: str,
     h_type: HypothesisType,
-    parsed: dict[str, Any],
+    parsed: dict,
     symptom: str,
 ) -> Hypothesis:
     """Build a Hypothesis from a parsed LLM response."""
@@ -137,7 +150,7 @@ def _build_hypothesis(
 # ---------------------------------------------------------------------------
 
 async def generate_hypotheses(
-    llm_call: Any,
+    llm_call: LLMCall,
     surface_symptom: str,
     context: str = "",
 ) -> list[Hypothesis]:
@@ -150,6 +163,10 @@ async def generate_hypotheses(
 
     Returns:
         List of 3 Hypothesis objects (mechanism, narrative, constraint).
+
+    Raises:
+        PipelineError: if any perspective generation fails. No placeholder
+            hypotheses are fabricated.
     """
     prompts = [
         (MECHANISM_PROMPT, HypothesisType.MECHANISM, "mech"),
@@ -157,27 +174,31 @@ async def generate_hypotheses(
         (CONSTRAINT_PROMPT, HypothesisType.CONSTRAINT, "constr"),
     ]
 
-    async def _generate_one(template: str, h_type: HypothesisType, short_id: str) -> Hypothesis:
+    async def _generate_one(
+        template: str, h_type: HypothesisType, short_id: str
+    ) -> Hypothesis:
         prompt = template.format(symptom=surface_symptom, context=context)
         try:
             raw = await llm_call(prompt)
             parsed = _parse_json_response(raw)
-            return _build_hypothesis(
-                h_id=f"{short_id}_{uuid.uuid4().hex[:6]}",
-                h_type=h_type,
-                parsed=parsed,
-                symptom=surface_symptom,
-            )
+        except PipelineError:
+            raise
         except Exception as e:
-            logger.error("Hypothesis generation failed for %s: %s", h_type.value, e)
-            return Hypothesis(
-                id=f"{short_id}_{uuid.uuid4().hex[:6]}",
-                text=f"[Generation failed: {e}]",
-                h_type=h_type,
-                d1_symptom=surface_symptom,
-            )
+            raise PipelineError(
+                f"Hypothesis generation failed for perspective "
+                f"'{h_type.value}': {e}"
+            ) from e
+        return _build_hypothesis(
+            h_id=f"{short_id}_{uuid.uuid4().hex[:6]}",
+            h_type=h_type,
+            parsed=parsed,
+            symptom=surface_symptom,
+        )
 
-    tasks = [_generate_one(template, h_type, short_id) for template, h_type, short_id in prompts]
+    tasks = [
+        _generate_one(template, h_type, short_id)
+        for template, h_type, short_id in prompts
+    ]
     results = await asyncio.gather(*tasks)
     return list(results)
 
@@ -187,7 +208,7 @@ async def generate_hypotheses(
 # ---------------------------------------------------------------------------
 
 async def unroll_depths(
-    llm_call: Any,
+    llm_call: LLMCall,
     hypotheses: list[Hypothesis],
 ) -> list[Hypothesis]:
     """Ensure every hypothesis has d2 (mechanism) and d3 (invariant) populated.
@@ -201,6 +222,9 @@ async def unroll_depths(
 
     Returns:
         The same hypotheses with d2/d3 populated.
+
+    Raises:
+        PipelineError: if depth extraction fails for any hypothesis.
     """
     UNROLL_PROMPT = """Given this hypothesis about the symptom "{symptom}":
 
@@ -217,127 +241,21 @@ Extract the deeper layers. Respond in JSON:
     async def _unroll_one(h: Hypothesis) -> None:
         if h.d2_mechanism and h.d3_invariant:
             return
+        prompt = UNROLL_PROMPT.format(symptom=h.d1_symptom, hypothesis=h.text)
         try:
-            prompt = UNROLL_PROMPT.format(
-                symptom=h.d1_symptom,
-                hypothesis=h.text,
-            )
             raw = await llm_call(prompt)
             parsed = _parse_json_response(raw)
-            h.d2_mechanism = parsed.get("d2_mechanism", "")
-            h.d3_invariant = parsed.get("d3_invariant", "")
-            if parsed.get("evidence"):
-                h.evidence = parsed["evidence"]
+        except PipelineError:
+            raise
         except Exception as e:
-            logger.error("Depth unroll failed for %s: %s", h.id, e)
-            h.d2_mechanism = h.d2_mechanism or "[unroll failed]"
-            h.d3_invariant = h.d3_invariant or "[unroll failed]"
+            raise PipelineError(f"Depth unroll failed for {h.id}: {e}") from e
+        h.d2_mechanism = parsed.get("d2_mechanism", "")
+        h.d3_invariant = parsed.get("d3_invariant", "")
+        if parsed.get("evidence"):
+            h.evidence = parsed["evidence"]
 
-    tasks = [_unroll_one(h) for h in hypotheses]
-    await asyncio.gather(*tasks)
+    await asyncio.gather(*[_unroll_one(h) for h in hypotheses])
     return hypotheses
-
-
-# ---------------------------------------------------------------------------
-# Stage A: Constraint check with formal verification
-# ---------------------------------------------------------------------------
-
-def _is_formalizable(constraint: str, invariant: str) -> bool:
-    """Heuristic: can this constraint+invariant pair be expressed as FOL?
-
-    Returns True if the constraint and invariant contain formalizable
-    language (quantifiers, logical operators, mathematical relations).
-    """
-    formal_keywords = [
-        "all ", "every ", "any ", "no ", "exists ", "at least", "at most",
-        "greater than", "less than", "equal to", "not ", "and ", "or ",
-        "if ", "then ", "implies ", "iff ", "only if",
-        "<", ">", "<=", ">=", "=", "!=", "≠", "≤", "≥",
-        "sum", "total", "maximum", "minimum", "bound", "limit",
-        "cannot", "impossible", "must", "required", "necessary",
-    ]
-    combined = (constraint + " " + invariant).lower()
-    return any(kw in combined for kw in formal_keywords)
-
-
-async def _check_constraint_formal(
-    prover_call: Any,
-    hypothesis: Hypothesis,
-    known_constraints: list[str],
-) -> tuple[bool, str]:
-    """Use formal prover to check if hypothesis violates known constraints.
-
-    Returns (violates: bool, detail: str).
-    """
-    # Build premises from known constraints
-    premises = known_constraints + [hypothesis.d3_invariant]
-    conclusion = f"not ({hypothesis.d3_invariant})"
-
-    try:
-        # Try to prove that the constraints entail a contradiction with the invariant
-        result = await prover_call(
-            premises=premises,
-            conclusion=conclusion,
-        )
-        if result.get("proved", False):
-            return True, f"Formal proof: constraints contradict the invariant. {result.get('reasoning', '')}"
-    except Exception as e:
-        logger.warning("Formal prover failed, falling back to LLM: %s", e)
-
-    # Fallback: try to find a counterexample
-    try:
-        result = await prover_call(
-            premises=premises,
-            conclusion=hypothesis.d3_invariant,
-        )
-        if result.get("result") == "unprovable":
-            # The invariant doesn't follow from constraints — not necessarily a violation
-            # but worth flagging
-            pass
-    except Exception:
-        pass
-
-    return False, ""
-
-
-async def _check_constraint_llm(
-    llm_call: Any,
-    hypothesis: Hypothesis,
-    known_constraints: list[str],
-) -> tuple[bool, str]:
-    """Use LLM to check if hypothesis violates known constraints."""
-    CONSTRAINT_CHECK_PROMPT = """Known constraints (physical, economic, logical, or domain-specific):
-{constraints}
-
-Hypothesis: {hypothesis}
-Proposed invariant: {invariant}
-
-Does this hypothesis VIOLATE any of the known constraints? Respond in JSON:
-{{
-  "violates": true_or_false,
-  "which_constraint": "the specific constraint violated, or 'none'",
-  "reasoning": "brief explanation"
-}}"""
-
-    constraints_text = "\n".join(f"- {c}" for c in (known_constraints or []))
-    if not constraints_text:
-        constraints_text = "- No specific constraints provided"
-
-    prompt = CONSTRAINT_CHECK_PROMPT.format(
-        constraints=constraints_text,
-        hypothesis=hypothesis.text,
-        invariant=hypothesis.d3_invariant,
-    )
-    raw = await llm_call(prompt)
-    parsed = _parse_json_response(raw)
-
-    if parsed.get("violates", False):
-        detail = (
-            f"Violates constraint: {parsed.get('which_constraint', 'unknown')}. "
-            f"{parsed.get('reasoning', '')}"
-        )
-        return True, detail
-    return False, ""
 
 
 # ---------------------------------------------------------------------------
@@ -345,17 +263,17 @@ Does this hypothesis VIOLATE any of the known constraints? Respond in JSON:
 # ---------------------------------------------------------------------------
 
 async def apply_via_negativa(
-    llm_call: Any,
+    llm_call: LLMCall,
     surface_symptom: str,
     hypotheses: list[Hypothesis],
     known_constraints: list[str] | None = None,
-    prover_call: Any | None = None,
 ) -> FilterResult:
     """Apply the Via Negativa subtraction engine.
 
     Three elimination stages:
     A. Constraint check — does the hypothesis violate known constraints?
-       Uses formal prover (mcp-logic) for formalizable constraints, LLM fallback.
+       Skipped entirely when no constraints are provided (an LLM asked to
+       find violations of nothing tends to hallucinate some).
     B. Lakatosian cut — does the hypothesis require ad hoc defenses?
     C. Bayesian collider — is there a stronger mechanism that explains away
        competing narratives sharing the same symptom?
@@ -369,56 +287,65 @@ async def apply_via_negativa(
         surface_symptom: The original observation.
         hypotheses: Competing hypotheses to filter.
         known_constraints: Optional list of known invariant constraints.
-        prover_call: Optional async callable for formal verification.
-            Should accept (premises: list[str], conclusion: str) and return
-            a dict with at least {"proved": bool}. When provided and a
-            constraint pair is formalizable, this is used instead of LLM.
 
     Returns:
         FilterResult with survivors and elimination log.
+
+    Raises:
+        PipelineError: if any stage's LLM call fails. A check that did not
+            run never counts as a check that passed.
     """
     elimination_log: list[EliminationRecord] = []
 
-    # --- Stage A: Constraint Check ---
-    # --- Stage A: Constraint Check ---
+    # --- Stage A: Constraint Check (only when constraints exist) ---
+    CONSTRAINT_CHECK_PROMPT = """Known constraints (physical, economic, logical, or domain-specific):
+{constraints}
+
+Hypothesis: {hypothesis}
+Proposed invariant: {invariant}
+
+Does this hypothesis VIOLATE any of the known constraints? Respond in JSON:
+{{
+  "violates": true_or_false,
+  "which_constraint": "the specific constraint violated, or 'none'",
+  "reasoning": "brief explanation"
+}}"""
+
     async def _check_constraint(h: Hypothesis) -> None:
         if h.eliminated:
             return
+        prompt = CONSTRAINT_CHECK_PROMPT.format(
+            constraints="\n".join(f"- {c}" for c in known_constraints),
+            hypothesis=h.text,
+            invariant=h.d3_invariant,
+        )
         try:
-            violated = False
-            detail = ""
-
-            # Try formal prover first if available and constraint looks formalizable
-            if prover_call and known_constraints:
-                for constraint in known_constraints:
-                    if _is_formalizable(constraint, h.d3_invariant):
-                        violated, detail = await _check_constraint_formal(
-                            prover_call, h, known_constraints
-                        )
-                        if violated:
-                            break
-
-            # Fallback to LLM for non-formalizable or if prover unavailable
-            if not violated:
-                violated, detail = await _check_constraint_llm(
-                    llm_call, h, known_constraints or []
-                )
-
-            if violated:
-                h.eliminated = True
-                h.elimination_reason = "quarantined"
-                h.elimination_detail = detail
-                elimination_log.append(EliminationRecord(
-                    hypothesis_id=h.id,
-                    hypothesis_text=h.text,
-                    reason="quarantined",
-                    detail=detail,
-                ))
-                logger.info("Quarantined %s: %s", h.id, detail)
+            raw = await llm_call(prompt)
+            parsed = _parse_json_response(raw)
+        except PipelineError:
+            raise
         except Exception as e:
-            logger.error("Constraint check failed for %s: %s", h.id, e)
+            raise PipelineError(
+                f"Stage A constraint check failed for {h.id}: {e}"
+            ) from e
 
-    await asyncio.gather(*[_check_constraint(h) for h in hypotheses])
+        if parsed.get("violates", False):
+            h.eliminated = True
+            h.elimination_reason = "quarantined"
+            h.elimination_detail = (
+                f"Violates constraint: {parsed.get('which_constraint', 'unknown')}. "
+                f"{parsed.get('reasoning', '')}"
+            )
+            elimination_log.append(EliminationRecord(
+                hypothesis_id=h.id,
+                hypothesis_text=h.text,
+                reason="quarantined",
+                detail=h.elimination_detail,
+            ))
+            logger.info("Quarantined %s: %s", h.id, h.elimination_detail)
+
+    if known_constraints:
+        await asyncio.gather(*[_check_constraint(h) for h in hypotheses])
 
     # --- Stage B: Lakatosian Cut ---
     LAKATOS_PROMPT = """Hypothesis: {hypothesis}
@@ -439,28 +366,34 @@ Respond in JSON:
     async def _check_lakatos(h: Hypothesis) -> None:
         if h.eliminated:
             return
+        prompt = LAKATOS_PROMPT.format(
+            hypothesis=h.text,
+            mechanism=h.d2_mechanism,
+            invariant=h.d3_invariant,
+        )
         try:
-            prompt = LAKATOS_PROMPT.format(
-                hypothesis=h.text,
-                mechanism=h.d2_mechanism,
-                invariant=h.d3_invariant,
-            )
             raw = await llm_call(prompt)
             parsed = _parse_json_response(raw)
-
-            if parsed.get("degenerating", False):
-                h.eliminated = True
-                h.elimination_reason = "degenerating"
-                h.elimination_detail = parsed.get("reasoning", "Non-falsifiable or ad hoc")
-                elimination_log.append(EliminationRecord(
-                    hypothesis_id=h.id,
-                    hypothesis_text=h.text,
-                    reason="degenerating",
-                    detail=h.elimination_detail,
-                ))
-                logger.info("Lakatos cut %s: %s", h.id, h.elimination_detail)
+        except PipelineError:
+            raise
         except Exception as e:
-            logger.error("Lakatos check failed for %s: %s", h.id, e)
+            raise PipelineError(
+                f"Stage B Lakatos check failed for {h.id}: {e}"
+            ) from e
+
+        if parsed.get("degenerating", False):
+            h.eliminated = True
+            h.elimination_reason = "degenerating"
+            h.elimination_detail = parsed.get(
+                "reasoning", "Non-falsifiable or ad hoc"
+            )
+            elimination_log.append(EliminationRecord(
+                hypothesis_id=h.id,
+                hypothesis_text=h.text,
+                reason="degenerating",
+                detail=h.elimination_detail,
+            ))
+            logger.info("Lakatos cut %s: %s", h.id, h.elimination_detail)
 
     await asyncio.gather(*[_check_lakatos(h) for h in hypotheses])
 
@@ -490,21 +423,30 @@ Respond in JSON:
   "reasoning": "why this mechanism is strongest"
 }}"""
 
+        mech_list = "\n".join(
+            f"[{m.id}] {m.text}\n  Mechanism: {m.d2_mechanism}"
+            for m in mechanisms
+        )
+        prompt = STRONGEST_MECH_PROMPT.format(
+            symptom=surface_symptom,
+            mechanisms=mech_list,
+        )
         try:
-            mech_list = "\n".join(
-                f"[{m.id}] {m.text}\n  Mechanism: {m.d2_mechanism}"
-                for m in mechanisms
-            )
-            prompt = STRONGEST_MECH_PROMPT.format(
-                symptom=surface_symptom,
-                mechanisms=mech_list,
-            )
             raw = await llm_call(prompt)
             parsed = _parse_json_response(raw)
-            strongest_id = parsed.get("strongest_id", "")
+        except PipelineError:
+            raise
+        except Exception as e:
+            raise PipelineError(
+                f"Stage C strongest-mechanism selection failed: {e}"
+            ) from e
+        strongest_id = parsed.get("strongest_id", "")
 
-            if strongest_id:
-                EXPLAIN_AWAY_PROMPT = """Surface symptom: {symptom}
+        strongest_mech = next(
+            (m for m in mechanisms if m.id == strongest_id), None
+        )
+        if strongest_mech:
+            EXPLAIN_AWAY_PROMPT = """Surface symptom: {symptom}
 
 Strongest mechanism: {strong_mechanism}
 
@@ -524,44 +466,42 @@ much less likely? Respond in JSON:
   ]
 }}"""
 
-                strongest_mech = next(
-                    (m for m in mechanisms if m.id == strongest_id), None
-                )
-                if strongest_mech:
-                    narr_list = "\n".join(
-                        f"[{n.id}] {n.text}" for n in narratives
-                    )
-                    prompt = EXPLAIN_AWAY_PROMPT.format(
-                        symptom=surface_symptom,
-                        strong_mechanism=strongest_mech.text,
-                        narratives=narr_list,
-                    )
-                    raw = await llm_call(prompt)
-                    ea_result = _parse_json_response(raw)
+            narr_list = "\n".join(f"[{n.id}] {n.text}" for n in narratives)
+            prompt = EXPLAIN_AWAY_PROMPT.format(
+                symptom=surface_symptom,
+                strong_mechanism=strongest_mech.text,
+                narratives=narr_list,
+            )
+            try:
+                raw = await llm_call(prompt)
+                ea_result = _parse_json_response(raw)
+            except PipelineError:
+                raise
+            except Exception as e:
+                raise PipelineError(
+                    f"Stage C explain-away check failed: {e}"
+                ) from e
 
-                    for item in ea_result.get("results", []):
-                        if item.get("explained_away", False):
-                            narr_id = item["narrative_id"]
-                            for h in narratives:
-                                if h.id == narr_id and not h.eliminated:
-                                    h.eliminated = True
-                                    h.elimination_reason = "explained_away"
-                                    h.elimination_detail = (
-                                        f"Explained away by mechanism [{strongest_id}]: "
-                                        f"{item.get('reasoning', '')}"
-                                    )
-                                    elimination_log.append(EliminationRecord(
-                                        hypothesis_id=h.id,
-                                        hypothesis_text=h.text,
-                                        reason="explained_away",
-                                        detail=h.elimination_detail,
-                                    ))
-                                    logger.info(
-                                        "Explained away %s by %s",
-                                        h.id, strongest_id,
-                                    )
-        except Exception as e:
-            logger.error("Bayesian collider test failed: %s", e)
+            for item in ea_result.get("results", []):
+                if item.get("explained_away", False):
+                    narr_id = item.get("narrative_id", "")
+                    for h in narratives:
+                        if h.id == narr_id and not h.eliminated:
+                            h.eliminated = True
+                            h.elimination_reason = "explained_away"
+                            h.elimination_detail = (
+                                f"Explained away by mechanism [{strongest_id}]: "
+                                f"{item.get('reasoning', '')}"
+                            )
+                            elimination_log.append(EliminationRecord(
+                                hypothesis_id=h.id,
+                                hypothesis_text=h.text,
+                                reason="explained_away",
+                                detail=h.elimination_detail,
+                            ))
+                            logger.info(
+                                "Explained away %s by %s", h.id, strongest_id
+                            )
 
     surviving = [h for h in hypotheses if not h.eliminated]
     strongest = next(
@@ -583,9 +523,9 @@ much less likely? Respond in JSON:
 # ---------------------------------------------------------------------------
 
 async def synthesize_truth(
-    llm_call: Any,
+    llm_call: LLMCall,
     filter_result: FilterResult,
-) -> dict[str, Any]:
+) -> dict:
     """Compress surviving hypotheses into an actionable truth.
 
     Confidence is derived from the survival rate (survivors / total), not
@@ -598,6 +538,10 @@ async def synthesize_truth(
 
     Returns:
         Dict with actionable_truth, confidence (survival-rate based), and next_steps.
+
+    Raises:
+        PipelineError: if the synthesis LLM call fails. No placeholder
+            synthesis is fabricated.
     """
     total = len(filter_result.all_hypotheses)
     survived = len(filter_result.surviving_hypotheses)
@@ -631,27 +575,24 @@ Respond in JSON:
         for r in filter_result.elimination_log
     ) or "No eliminations."
 
+    prompt = SYNTHESIS_PROMPT.format(
+        symptom=filter_result.surface_symptom,
+        survived=survived,
+        total=total,
+        survivors=survivors_text,
+        elimination_log=log_text,
+    )
     try:
-        prompt = SYNTHESIS_PROMPT.format(
-            symptom=filter_result.surface_symptom,
-            survived=survived,
-            total=total,
-            survivors=survivors_text,
-            elimination_log=log_text,
-        )
         raw = await llm_call(prompt)
         parsed = _parse_json_response(raw)
-        return {
-            "actionable_truth": parsed.get("actionable_truth", ""),
-            "confidence": round(survival_rate, 2),
-            "next_steps": parsed.get("next_steps", []),
-            "remaining_uncertainties": parsed.get("remaining_uncertainties", []),
-        }
+    except PipelineError:
+        raise
     except Exception as e:
-        logger.error("Synthesis failed: %s", e)
-        return {
-            "actionable_truth": f"[Synthesis failed: {e}]",
-            "confidence": round(survival_rate, 2),
-            "next_steps": [],
-            "remaining_uncertainties": ["synthesis failed"],
-        }
+        raise PipelineError(f"Truth synthesis failed: {e}") from e
+
+    return {
+        "actionable_truth": parsed.get("actionable_truth", ""),
+        "confidence": round(survival_rate, 2),
+        "next_steps": parsed.get("next_steps", []),
+        "remaining_uncertainties": parsed.get("remaining_uncertainties", []),
+    }
