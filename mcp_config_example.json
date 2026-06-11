@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "wisdom-engine": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/path/to/wisdom-engine",
+        "run",
+        "wisdom-engine"
+      ]
+    }
+  }
+}

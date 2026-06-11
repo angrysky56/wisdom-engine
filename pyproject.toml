@@ -1,0 +1,28 @@
+[project]
+name = "wisdom-engine"
+version = "0.1.0"
+description = "MCP server for epistemic filtering via Via Negativa — hypothesis generation, subtraction, and truth synthesis"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+wisdom-engine = "wisdom_engine.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/wisdom_engine"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.4.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
