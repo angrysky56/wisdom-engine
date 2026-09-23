@@ -126,7 +126,7 @@ def make_openrouter_call() -> LLMCall:
                 f"OpenRouter HTTP {e.response.status_code}: {e.response.text[:300]}"
             ) from e
         except (httpx.HTTPError, KeyError, IndexError, ValueError) as e:
-            raise LLMCallError(f"OpenRouter call failed: {e}") from e
+            raise LLMCallError(f"OpenRouter call failed: {type(e).__name__}: {e}") from e
 
     return llm_call
 
@@ -156,12 +156,31 @@ async def ollama_available() -> str | None:
     except (httpx.HTTPError, ValueError):
         return None
 
-    preferred = os.environ.get("OLLAMA_MODEL")
+    return pick_ollama_model(os.environ.get("OLLAMA_MODEL"), models)
+
+
+def pick_ollama_model(preferred: str | None, models: list[dict]) -> str | None:
+    """Choose the Ollama model: OLLAMA_MODEL if it is installed, else the first installed one.
+
+    A configured model that is not installed raises instead of failing later with an
+    opaque 404 from /api/chat (seen 2026-09-22: OLLAMA_MODEL=gemma4:12b, not pulled).
+
+    Args:
+        preferred: Value of OLLAMA_MODEL, or None.
+        models: The "models" list from Ollama's /api/tags.
+
+    Returns:
+        The model name to use, or None when nothing is installed and none is configured.
+    """
+    names = [m.get("name", "") for m in models]
     if preferred:
-        return preferred
-    if models:
-        return models[0]["name"]
-    return None
+        if preferred in names:
+            return preferred
+        raise LLMUnavailableError(
+            f"OLLAMA_MODEL={preferred!r} is not installed in Ollama. "
+            f"Installed: {', '.join(names) or 'none'}. Pull it or change OLLAMA_MODEL."
+        )
+    return names[0] if names else None
 
 
 def make_ollama_call(model: str) -> LLMCall:
@@ -183,7 +202,7 @@ def make_ollama_call(model: str) -> LLMCall:
                 data = resp.json()
             return data["message"]["content"]
         except (httpx.HTTPError, KeyError, ValueError) as e:
-            raise LLMCallError(f"Ollama call failed ({model}): {e}") from e
+            raise LLMCallError(f"Ollama call failed ({model}): {type(e).__name__}: {e}") from e
 
     return llm_call
 
