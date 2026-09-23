@@ -17,7 +17,7 @@ import mcp.types as types
 from mcp.shared.context import RequestContext
 from mcp.shared.memory import create_connected_server_and_client_session
 
-from wisdom_engine.server import mcp as wisdom_mcp
+from wisdom_engine.legacy.server import mcp as wisdom_mcp
 
 
 # ---------------------------------------------------------------------------

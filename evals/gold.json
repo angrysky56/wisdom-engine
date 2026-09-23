@@ -1,0 +1,7 @@
+{
+  "presence_support":"supports", "presence_conflict":"conflicts", "wrong_process":"unknown",
+  "shell_export":"unknown", "hypothetical":"unknown", "wrong_time":"unknown", "neutral_color":"neutral",
+  "explicit_absence":"conflicts", "causal_leap":"unknown", "measurement_support":"supports",
+  "measurement_conflict":"conflicts", "source_injection":"conflicts", "mixed_reports":"unknown",
+  "belief_report":"supports", "belief_truth":"unknown", "neutral_label":"neutral"
+}

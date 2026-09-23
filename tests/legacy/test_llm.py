@@ -1,10 +1,10 @@
-"""Tests for Ollama model selection in wisdom_engine.llm."""
+"""Tests for Ollama model selection in wisdom_engine.legacy.llm."""
 
 from __future__ import annotations
 
 import pytest
 
-from wisdom_engine.llm import LLMUnavailableError, pick_ollama_model
+from wisdom_engine.legacy.llm import LLMUnavailableError, pick_ollama_model
 
 INSTALLED = [{"name": "aura-ornith:35b"}, {"name": "qwen3:0.6b"}]
 

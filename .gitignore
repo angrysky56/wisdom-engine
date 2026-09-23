@@ -17,3 +17,11 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Local inquiry data and build products
+.wisdom/
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+dist/

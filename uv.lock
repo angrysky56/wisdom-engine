@@ -695,11 +695,12 @@ wheels = [
 
 [[package]]
 name = "wisdom-engine"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },
     { name = "mcp" },
+    { name = "pydantic" },
     { name = "python-dotenv" },
 ]
 
@@ -711,9 +712,10 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "httpx", specifier = ">=0.27.0" },
-    { name = "mcp", specifier = ">=1.0.0" },
-    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "httpx", specifier = "==0.28.1" },
+    { name = "mcp", specifier = "==1.27.2" },
+    { name = "pydantic", specifier = "==2.13.4" },
+    { name = "python-dotenv", specifier = "==1.2.2" },
 ]
 
 [package.metadata.requires-dev]

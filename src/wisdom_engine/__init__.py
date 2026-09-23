@@ -1,25 +1,6 @@
-"""Wisdom Engine — MCP server for epistemic filtering via Via Negativa."""
+"""Wisdom Engine: persistent inquiry with optional, attributed Jev assessments."""
+from .contracts import CaseInput, Observation, Claim, Assessment, Ref
+from .store import Store, InquiryError
 
-from .engine import (
-    apply_via_negativa,
-    generate_hypotheses,
-    synthesize_truth,
-)
-from .models import (
-    EliminationRecord,
-    EliminationReason,
-    FilterResult,
-    Hypothesis,
-    HypothesisType,
-)
-
-__all__ = [
-    "apply_via_negativa",
-    "generate_hypotheses",
-    "synthesize_truth",
-    "EliminationRecord",
-    "EliminationReason",
-    "FilterResult",
-    "Hypothesis",
-    "HypothesisType",
-]
+__all__ = ['CaseInput', 'Observation', 'Claim', 'Assessment', 'Ref', 'Store', 'InquiryError']
+__version__ = '0.2.0'

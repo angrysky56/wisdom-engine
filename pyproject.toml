@@ -1,12 +1,13 @@
 [project]
 name = "wisdom-engine"
-version = "0.1.0"
-description = "MCP server for epistemic filtering via Via Negativa — hypothesis generation, subtraction, and truth synthesis"
+version = "0.2.0"
+description = "Revisable inquiry records and optional Jev evidence assessments over MCP"
 requires-python = ">=3.12"
 dependencies = [
-    "mcp>=1.0.0",
-    "httpx>=0.27.0",
-    "python-dotenv>=1.0.1",
+    "mcp==1.27.2",
+    "pydantic==2.13.4",
+    "httpx==0.28.1",
+    "python-dotenv==1.2.2",
 ]
 
 [build-system]
@@ -18,6 +19,26 @@ wisdom-engine = "wisdom_engine.server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/wisdom_engine"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/scripts",
+    "/docs",
+    "/evals/*.py",
+    "/evals/cases.json",
+    "/evals/gold.json",
+    "/evals/PROTOCOL.md",
+    "/evals/results/*.json",
+    "/README.md",
+    "/PLAN.md",
+    "/pyproject.toml",
+    "/uv.lock",
+    "/mcp_config_example.json",
+    "/.env.example",
+]
+exclude = ["__pycache__", "*.pyc"]
 
 [dependency-groups]
 dev = [

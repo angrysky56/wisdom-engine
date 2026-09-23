@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from wisdom_engine.engine import (
+from wisdom_engine.legacy.engine import (
     PipelineError,
     _parse_json_response,
     _build_hypothesis,
@@ -14,7 +14,7 @@ from wisdom_engine.engine import (
     generate_hypotheses,
     unroll_depths,
 )
-from wisdom_engine.models import Hypothesis, HypothesisType
+from wisdom_engine.legacy.models import Hypothesis, HypothesisType
 
 
 # ---------------------------------------------------------------------------

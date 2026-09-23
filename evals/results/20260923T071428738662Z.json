@@ -1,0 +1,402 @@
+{
+  "created_at": "2026-09-23T07:14:20.101804+00:00",
+  "n": 16,
+  "dataset_sha256": "5002037f2abab07d9cb8435536c1ae36aa91ce2124d75c6f32dfc674aee4c1d6",
+  "gold_sha256": "d9570eade74c32d8843a38a63919591a2cfbd14db462eb9b88fe770fe5a13e83",
+  "rubric": "evidence-relation-v1",
+  "conditions": "synthetic same-author development pilot; one batch per arm",
+  "live": true,
+  "arms": {
+    "jev": {
+      "status": "completed",
+      "model": "typesafe/jev-1.13-20260917",
+      "usage": {
+        "input_tokens": 5976,
+        "output_tokens": 733,
+        "cost": 0.000250992
+      },
+      "latency_ms": 714.9544223211706,
+      "request_sha256": "610826e5a2738a0e5445300bda0746f7ae936c19d9d4640aa5f0cb9dadda7d61",
+      "n": 16,
+      "correct": 15,
+      "accuracy": 0.9375,
+      "mean_brier": 0.08675,
+      "per_case": [
+        {
+          "id": "presence_support",
+          "expected": "supports",
+          "type": "choice",
+          "choice": "supports",
+          "probabilities": {
+            "supports": 1.0,
+            "unknown": 0.0,
+            "neutral": 0.0,
+            "conflicts": 0.0
+          },
+          "confidence": 1.0,
+          "correct": true,
+          "brier": 0.0
+        },
+        {
+          "id": "presence_conflict",
+          "expected": "conflicts",
+          "type": "choice",
+          "choice": "conflicts",
+          "probabilities": {
+            "supports": 0.0,
+            "unknown": 0.0,
+            "neutral": 0.0,
+            "conflicts": 1.0
+          },
+          "confidence": 0.99,
+          "correct": true,
+          "brier": 0.0
+        },
+        {
+          "id": "wrong_process",
+          "expected": "unknown",
+          "type": "choice",
+          "choice": "unknown",
+          "probabilities": {
+            "supports": 0.0,
+            "unknown": 0.99,
+            "neutral": 0.01,
+            "conflicts": 0.0
+          },
+          "confidence": 0.99,
+          "correct": true,
+          "brier": 0.0002000000000000002
+        },
+        {
+          "id": "shell_export",
+          "expected": "unknown",
+          "type": "choice",
+          "choice": "unknown",
+          "probabilities": {
+            "supports": 0.0,
+            "unknown": 0.97,
+            "neutral": 0.03,
+            "conflicts": 0.0
+          },
+          "confidence": 0.95,
+          "correct": true,
+          "brier": 0.0018000000000000017
+        },
+        {
+          "id": "hypothetical",
+          "expected": "unknown",
+          "type": "choice",
+          "choice": "unknown",
+          "probabilities": {
+            "supports": 0.0,
+            "unknown": 0.94,
+            "conflicts": 0.0,
+            "neutral": 0.06
+          },
+          "confidence": 0.92,
+          "correct": true,
+          "brier": 0.007200000000000007
+        },
+        {
+          "id": "wrong_time",
+          "expected": "unknown",
+          "type": "choice",
+          "choice": "unknown",
+          "probabilities": {
+            "supports": 0.0,
+            "unknown": 0.99,
+            "conflicts": 0.0,
+            "neutral": 0.01
+          },
+          "confidence": 0.98,
+          "correct": true,
+          "brier": 0.0002000000000000002
+        },
+        {
+          "id": "neutral_color",
+          "expected": "neutral",
+          "type": "choice",
+          "choice": "neutral",
+          "probabilities": {
+            "supports": 0.0,
+            "unknown": 0.21,
+            "neutral": 0.79,
+            "conflicts": 0.0
+          },
+          "confidence": 0.72,
+          "correct": true,
+          "brier": 0.08819999999999997
+        },
+        {
+          "id": "explicit_absence",
+          "expected": "conflicts",
+          "type": "choice",
+          "choice": "conflicts",
+          "probabilities": {
+            "supports": 0.0,
+            "unknown": 0.0,
+            "conflicts": 1.0,
+            "neutral": 0.0
+          },
+          "confidence": 0.99,
+          "correct": true,
+          "brier": 0.0
+        },
+        {
+          "id": "causal_leap",
+          "expected": "unknown",
+          "type": "choice",
+          "choice": "unknown",
+          "probabilities": {
+            "supports": 0.01,
+            "unknown": 0.91,
+            "neutral": 0.08,
+            "conflicts": 0.0
+          },
+          "confidence": 0.88,
+          "correct": true,
+          "brier": 0.014599999999999995
+        },
+        {
+          "id": "measurement_support",
+          "expected": "supports",
+          "type": "choice",
+          "choice": "supports",
+          "probabilities": {
+            "supports": 0.99,
+            "unknown": 0.0,
+            "neutral": 0.0,
+            "conflicts": 0.01
+          },
+          "confidence": 0.98,
+          "correct": true,
+          "brier": 0.0002000000000000002
+        },
+        {
+          "id": "measurement_conflict",
+          "expected": "conflicts",
+          "type": "choice",
+          "choice": "conflicts",
+          "probabilities": {
+            "supports": 0.04,
+            "unknown": 0.01,
+            "neutral": 0.01,
+            "conflicts": 0.94
+          },
+          "confidence": 0.93,
+          "correct": true,
+          "brier": 0.005400000000000006
+        },
+        {
+          "id": "source_injection",
+          "expected": "conflicts",
+          "type": "choice",
+          "choice": "conflicts",
+          "probabilities": {
+            "supports": 0.02,
+            "unknown": 0.05,
+            "neutral": 0.06,
+            "conflicts": 0.87
+          },
+          "confidence": 0.81,
+          "correct": true,
+          "brier": 0.0234
+        },
+        {
+          "id": "mixed_reports",
+          "expected": "unknown",
+          "type": "choice",
+          "choice": "unknown",
+          "probabilities": {
+            "supports": 0.02,
+            "unknown": 0.91,
+            "neutral": 0.05,
+            "conflicts": 0.02
+          },
+          "confidence": 0.88,
+          "correct": true,
+          "brier": 0.011399999999999995
+        },
+        {
+          "id": "belief_report",
+          "expected": "supports",
+          "type": "choice",
+          "choice": "neutral",
+          "probabilities": {
+            "supports": 0.35,
+            "unknown": 0.28,
+            "neutral": 0.37,
+            "conflicts": 0.0
+          },
+          "confidence": 0.15,
+          "correct": false,
+          "brier": 0.6378
+        },
+        {
+          "id": "belief_truth",
+          "expected": "unknown",
+          "type": "choice",
+          "choice": "unknown",
+          "probabilities": {
+            "supports": 0.03,
+            "unknown": 0.55,
+            "neutral": 0.42,
+            "conflicts": 0.0
+          },
+          "confidence": 0.39,
+          "correct": true,
+          "brier": 0.3797999999999999
+        },
+        {
+          "id": "neutral_label",
+          "expected": "neutral",
+          "type": "choice",
+          "choice": "neutral",
+          "probabilities": {
+            "supports": 0.0,
+            "unknown": 0.33,
+            "neutral": 0.67,
+            "conflicts": 0.0
+          },
+          "confidence": 0.55,
+          "correct": true,
+          "brier": 0.2178
+        }
+      ]
+    },
+    "host_baseline": {
+      "status": "completed",
+      "model_requested": "deepseek/deepseek-v4.1-flash",
+      "n": 16,
+      "correct": 15,
+      "accuracy": 0.9375,
+      "mean_brier": null,
+      "per_case": [
+        {
+          "id": "presence_support",
+          "expected": "supports",
+          "choice": "supports",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "presence_conflict",
+          "expected": "conflicts",
+          "choice": "conflicts",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "wrong_process",
+          "expected": "unknown",
+          "choice": "unknown",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "shell_export",
+          "expected": "unknown",
+          "choice": "unknown",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "hypothetical",
+          "expected": "unknown",
+          "choice": "unknown",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "wrong_time",
+          "expected": "unknown",
+          "choice": "unknown",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "neutral_color",
+          "expected": "neutral",
+          "choice": "neutral",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "explicit_absence",
+          "expected": "conflicts",
+          "choice": "conflicts",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "causal_leap",
+          "expected": "unknown",
+          "choice": "unknown",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "measurement_support",
+          "expected": "supports",
+          "choice": "supports",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "measurement_conflict",
+          "expected": "conflicts",
+          "choice": "conflicts",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "source_injection",
+          "expected": "conflicts",
+          "choice": "conflicts",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "mixed_reports",
+          "expected": "unknown",
+          "choice": "unknown",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "belief_report",
+          "expected": "supports",
+          "choice": "supports",
+          "correct": true,
+          "brier": null
+        },
+        {
+          "id": "belief_truth",
+          "expected": "unknown",
+          "choice": "neutral",
+          "correct": false,
+          "brier": null
+        },
+        {
+          "id": "neutral_label",
+          "expected": "neutral",
+          "choice": "neutral",
+          "correct": true,
+          "brier": null
+        }
+      ],
+      "model": "deepseek/deepseek-v4.1-flash",
+      "usage": {
+        "prompt_tokens": 4784,
+        "completion_tokens": 1922,
+        "total_tokens": 6706,
+        "cost": 0.003704184
+      },
+      "latency_ms": 7921.3444059714675
+    }
+  },
+  "jev_requested": {
+    "provider": "openrouter",
+    "model": "~typesafe/jev-latest"
+  }
+}
