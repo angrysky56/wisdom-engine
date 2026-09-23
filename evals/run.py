@@ -36,8 +36,17 @@ def summarize(cases: list[dict], gold: dict, answers: dict) -> dict:
         brier = sum((probabilities[k] - (1 if k == expected else 0)) ** 2 for k in CRITERIA) if probabilities else None
         rows.append({'id': case['id'], 'expected': expected, **answer,
                      'correct': answer['choice'] == expected, 'brier': brier})
+    confusion = {expected: {chosen: 0 for chosen in CRITERIA} for expected in CRITERIA}
+    for row in rows:
+        confusion[row['expected']][row['choice']] += 1
+    recall = {label: counts[label] / sum(counts.values()) if sum(counts.values()) else None
+              for label, counts in confusion.items()}
+    represented = [value for value in recall.values() if value is not None]
     return {'n': len(rows), 'correct': sum(r['correct'] for r in rows),
             'accuracy': sum(r['correct'] for r in rows) / len(rows),
+            'confusion_expected_by_predicted': confusion,
+            'per_class_recall': recall,
+            'macro_accuracy': sum(represented) / len(represented),
             'mean_brier': sum(r['brier'] for r in rows) / len(rows) if all(r['brier'] is not None for r in rows) else None,
             'per_case': rows}
 
@@ -97,6 +106,8 @@ async def run(args: argparse.Namespace) -> dict:
         except Exception as exc:
             report['arms']['host_baseline'] = {'status': 'failed', 'model_requested': args.baseline_model,
                                               'error_type': type(exc).__name__, 'elapsed_ms': (time.monotonic() - start) * 1000}
+    for arm in report['arms'].values():
+        arm['missing_cost'] = 'cost' not in arm.get('usage', {})
     folder = ROOT / 'results'
     folder.mkdir(exist_ok=True)
     destination = folder / (datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ') + '.json')

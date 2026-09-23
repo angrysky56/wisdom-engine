@@ -1,0 +1,1152 @@
+{
+  "created_at": "2026-09-23T18:19:19.209383+00:00",
+  "protocol": "controlled-revision-v1",
+  "model_requested": "deepseek/deepseek-v4.1-flash",
+  "cases": 4,
+  "turns_per_case": 2,
+  "live": true,
+  "conditions": "Same-author synthetic controlled updating; not a full autonomous investigation",
+  "source_sha256": "46aecb17a718d178b0393ace7e02fc031ff94cfdea5d1af0ef3677bb25029c15",
+  "system_sha256": "7c699e34c39d983ac0f0fd9293243dd8771794d7a26a9fb573d96dc53ec2d05c",
+  "trajectories": [
+    {
+      "case": 1,
+      "arm": "notes",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "Active same-scope observation (record 686c00afb88949b5a89d07404fdba73b, revision 1) directly reports key_present=true for process P at time T, and the active host assessment (record 40a2d3b200d94121ace52352cafe8fe9, revision 1) cites that observation as supporting the claim. No active contrary evidence appears in the provided records.",
+            "notes": "Claim record aefcaf0fbc15498d9c8fcc98106c772a revision 1 remains active. Supporting observation is a synthetic direct presence inspection with no stated limitations. No independent contrary or undermining evidence is present."
+          },
+          "usage": {
+            "prompt_tokens": 669,
+            "completion_tokens": 449,
+            "total_tokens": 1118,
+            "cost": 0.0002794176
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 8050.060062203556,
+          "input_sha256": "0cf1ecef86e0d570e8779d254044c941d89f9069328b5a17964bc76eaf8cf77e"
+        },
+        {
+          "turn": 1,
+          "expected": "unknown",
+          "correct": true,
+          "answer": {
+            "conclusion": "unknown",
+            "reason": "The only observation record (686c00afb88949b5a89d07404fdba73b) has been revised to revision 2, which states the inspection was of process Q, not P, and that P was not inspected. Its scope is now \"Q at T\", so it is not applicable evidence about P at T. The host assessment (40a2d3b200d94121ace52352cafe8fe9) depends on the superseded revision 1 of that observation and is therefore stale. No other active applicable evidence addresses key presence in process P at T.",
+            "notes": "Claim aefcaf0fbc15498d9c8fcc98106c772a revision 1 remains active and unchanged. The correction record explicitly retracts the P-scope inspection result: the original supporting observation is superseded and now concerns Q at T, with the source excerpt stating P was not inspected. The prior assessment citing observation revision 1 is stale and cannot support the claim. With no active same-scope evidence either supporting or contradicting the claim, the assessment is unknown rather than contested."
+          },
+          "usage": {
+            "prompt_tokens": 1056,
+            "completion_tokens": 430,
+            "total_tokens": 1486,
+            "cost": 0.00023911272
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 31429.034632164985,
+          "input_sha256": "55a85ecdb2567c59a26f5fccc9970c1bbc28b16aac80aad612da0b8056dca12b"
+        }
+      ],
+      "jev_runs": [],
+      "status": "completed",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.218924+00:00\",\"id\":\"aefcaf0fbc15498d9c8fcc98106c772a\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.219038+00:00\",\"id\":\"686c00afb88949b5a89d07404fdba73b\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.221195+00:00\",\"id\":\"40a2d3b200d94121ace52352cafe8fe9\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"aefcaf0fbc15498d9c8fcc98106c772a\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"686c00afb88949b5a89d07404fdba73b\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":3}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"Claim record aefcaf0fbc15498d9c8fcc98106c772a revision 1 remains active. Supporting observation is a synthetic direct presence inspection with no stated limitations. No independent contrary or undermining evidence is present.\",\"reason\":\"Active same-scope observation (record 686c00afb88949b5a89d07404fdba73b, revision 1) directly reports key_present=true for process P at time T, and the active host assessment (record 40a2d3b200d94121ace52352cafe8fe9, revision 1) cites that observation as supporting the claim. No active contrary evidence appears in the provided records.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"new_events\":[{\"record\":{\"change_reason\":\"Inspection was of Q\",\"created_at\":\"2026-09-23T18:19:27.274153+00:00\",\"id\":\"686c00afb88949b5a89d07404fdba73b\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"Q at T\",\"source\":{\"excerpt\":\"Correction: the inspection was of process Q, not P. P was not inspected.\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Wrong process was inspected\"},\"revision\":2},\"sequence\":4}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"unknown\",\"notes\":\"Claim aefcaf0fbc15498d9c8fcc98106c772a revision 1 remains active and unchanged. The correction record explicitly retracts the P-scope inspection result: the original supporting observation is superseded and now concerns Q at T, with the source excerpt stating P was not inspected. The prior assessment citing observation revision 1 is stale and cannot support the claim. With no active same-scope evidence either supporting or contradicting the claim, the assessment is unknown rather than contested.\",\"reason\":\"The only observation record (686c00afb88949b5a89d07404fdba73b) has been revised to revision 2, which states the inspection was of process Q, not P, and that P was not inspected. Its scope is now \\\"Q at T\\\", so it is not applicable evidence about P at T. The host assessment (40a2d3b200d94121ace52352cafe8fe9) depends on the superseded revision 1 of that observation and is therefore stale. No other active applicable evidence addresses key presence in process P at T.\"}"
+        }
+      ]
+    },
+    {
+      "case": 1,
+      "arm": "ledger",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "The active observation is same-scope direct presence inspection reporting key_present=true at P at T, and the active assessment links it as supporting the current claim. No active contrary or refuting evidence is present.",
+            "notes": "The assessment is an attributed host interpretation, not independent proof, and the observation is a synthetic fixture. However, within the provided record, applicable affirmative evidence supports the claim and there is no active contrary evidence."
+          },
+          "usage": {
+            "prompt_tokens": 1267,
+            "completion_tokens": 224,
+            "total_tokens": 1491,
+            "cost": 0.0002687454
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 5346.527351997793,
+          "input_sha256": "f5f9e14cb63735b8cc538cf0807c8f15d314a5e7dcb55b1dfb208516ef50068c"
+        },
+        {
+          "turn": 1,
+          "expected": "unknown",
+          "correct": true,
+          "answer": {
+            "conclusion": "unknown",
+            "reason": "There is no active applicable evidence supporting or refuting the current claim that the key is present in process P at T. The only active observation concerns Q at T and explicitly says P was not inspected.",
+            "notes": "The prior supporting assessment was invalidated because it depended on the earlier revision of the observation. The active observation revision now has scope Q at T and states P was not inspected, so it is not applicable evidence for the claim about P at T."
+          },
+          "usage": {
+            "prompt_tokens": 2057,
+            "completion_tokens": 206,
+            "total_tokens": 2263,
+            "cost": 0.000855657
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 23725.007477216423,
+          "input_sha256": "425909acc9bbaa54d9e3e09af97267e49f988272115bad3576c8a8d47b0f5dd6"
+        }
+      ],
+      "jev_runs": [],
+      "status": "completed",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.282852+00:00\",\"id\":\"5f656f96d88b4ddd897b41c43910eb3e\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"c854b7f16e5f49f4ac35bfc918cefbeb\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"03e503a4d6e9496c91c347e4e5f050d1\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"91f6e3f78bab4feda2251cd1410ec035\",\"claims\":[{\"assessment_ids\":[\"5f656f96d88b4ddd897b41c43910eb3e\"],\"id\":\"c854b7f16e5f49f4ac35bfc918cefbeb\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":1,\"missing_pairs\":0,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.280659+00:00\",\"id\":\"03e503a4d6e9496c91c347e4e5f050d1\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":3},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.280604+00:00\",\"id\":\"c854b7f16e5f49f4ac35bfc918cefbeb\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.280659+00:00\",\"id\":\"03e503a4d6e9496c91c347e4e5f050d1\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.282852+00:00\",\"id\":\"5f656f96d88b4ddd897b41c43910eb3e\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"c854b7f16e5f49f4ac35bfc918cefbeb\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"03e503a4d6e9496c91c347e4e5f050d1\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":3}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"The assessment is an attributed host interpretation, not independent proof, and the observation is a synthetic fixture. However, within the provided record, applicable affirmative evidence supports the claim and there is no active contrary evidence.\",\"reason\":\"The active observation is same-scope direct presence inspection reporting key_present=true at P at T, and the active assessment links it as supporting the current claim. No active contrary or refuting evidence is present.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[],\"case_id\":\"91f6e3f78bab4feda2251cd1410ec035\",\"claims\":[{\"assessment_ids\":[],\"id\":\"c854b7f16e5f49f4ac35bfc918cefbeb\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"untested\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":0,\"missing_pairs\":1,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[{\"id\":\"5f656f96d88b4ddd897b41c43910eb3e\",\"reasons\":[\"superseded_or_missing:03e503a4d6e9496c91c347e4e5f050d1@1\"]}],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"Inspection was of Q\",\"created_at\":\"2026-09-23T18:19:24.632435+00:00\",\"id\":\"03e503a4d6e9496c91c347e4e5f050d1\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"Q at T\",\"source\":{\"excerpt\":\"Correction: the inspection was of process Q, not P. P was not inspected.\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Wrong process was inspected\"},\"revision\":2}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":4},\"new_events\":[{\"record\":{\"change_reason\":\"Inspection was of Q\",\"created_at\":\"2026-09-23T18:19:24.632435+00:00\",\"id\":\"03e503a4d6e9496c91c347e4e5f050d1\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"Q at T\",\"source\":{\"excerpt\":\"Correction: the inspection was of process Q, not P. P was not inspected.\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Wrong process was inspected\"},\"revision\":2},\"sequence\":4}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"unknown\",\"notes\":\"The prior supporting assessment was invalidated because it depended on the earlier revision of the observation. The active observation revision now has scope Q at T and states P was not inspected, so it is not applicable evidence for the claim about P at T.\",\"reason\":\"There is no active applicable evidence supporting or refuting the current claim that the key is present in process P at T. The only active observation concerns Q at T and explicitly says P was not inspected.\"}"
+        }
+      ]
+    },
+    {
+      "case": 1,
+      "arm": "ledger_jev",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "The active claim that the key is present in process P at T is directly supported by the active same-scope observation reporting a direct presence inspection with key_present=true. Both active assessments on that observation also support the claim, and there is no active contrary evidence or refutation.",
+            "notes": "Evidence is limited to one synthetic same-scope inspection; the Jev model assessment is fallible and not independent evidence, but it does not override the direct observation. No applicable contrary evidence is present."
+          },
+          "usage": {
+            "prompt_tokens": 1567,
+            "completion_tokens": 333,
+            "total_tokens": 1900,
+            "cost": 0.0003556476
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 20909.843049012125,
+          "input_sha256": "68749c3d4c02fcb0d38c8de588211899adc67aa40fbf84c41062c16e3b5da900"
+        },
+        {
+          "turn": 1,
+          "expected": "unknown",
+          "correct": true,
+          "answer": {
+            "conclusion": "unknown",
+            "reason": "No active applicable evidence affirmatively supports or contradicts the claim that the key is present in process P at T. The direct inspection evidence was corrected to concern process Q, with the source stating P was not inspected, and the claim remains untested.",
+            "notes": "The prior supporting evidence depended on the observation's old revision (inspection of P); that revision is superseded. The corrected observation (revision 2) is scoped to Q and explicitly states P was not inspected, so it does not bear on P at T. The only remaining active assessment is a fallible model judgment of 'unknown' on the corrected observation and is not independent evidence."
+          },
+          "usage": {
+            "prompt_tokens": 2758,
+            "completion_tokens": 208,
+            "total_tokens": 2966,
+            "cost": 0.000533115
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 30340.207075700164,
+          "input_sha256": "47f058017e29ee103996dc552ae0dee675d9678b431de6badde08571648dbc77"
+        }
+      ],
+      "jev_runs": [
+        {
+          "usage": {
+            "input_tokens": 742,
+            "output_tokens": 48,
+            "cost": 3.1164e-05
+          },
+          "latency_ms": 1854.8687878064811,
+          "records": [
+            {
+              "id": "e42443f324434a8ab651007d40a02fe2",
+              "revision": 1,
+              "created_at": "2026-09-23T18:19:21.168709+00:00",
+              "lifecycle": "active",
+              "change_reason": "created",
+              "payload": {
+                "author": "Jev/typesafe/jev-1.13-20260917",
+                "requires": [],
+                "kind": "assessment",
+                "claim": {
+                  "record_id": "542083cb38cb4d5280373b14badea1c4",
+                  "revision": 1
+                },
+                "observation": {
+                  "record_id": "181c65d34908406eaded11dce0dea769",
+                  "revision": 1
+                },
+                "relation": "supports",
+                "rationale": "Typed Jev assessment under evidence-relation-v1; no generated explanation.",
+                "origin": "jev",
+                "prediction": null,
+                "review": null,
+                "jev": {
+                  "provider": "openrouter",
+                  "model_requested": "~typesafe/jev-latest",
+                  "model_returned": "typesafe/jev-1.13-20260917",
+                  "rubric": "evidence-relation-v1",
+                  "request_sha256": "d046b5ce6dce31c0951ae99257b953d5a19bd1ac6fb3510511f81927cd3ed4d8",
+                  "probabilities": {
+                    "neutral": 0.01,
+                    "supports": 0.96,
+                    "unknown": 0.03,
+                    "conflicts": 0.0
+                  },
+                  "confidence": 0.95,
+                  "latency_ms": 1854.8687878064811
+                }
+              }
+            }
+          ]
+        },
+        {
+          "usage": {
+            "input_tokens": 747,
+            "output_tokens": 48,
+            "cost": 3.1374e-05
+          },
+          "latency_ms": 638.0707272328436,
+          "records": [
+            {
+              "id": "bd09e497b1d44b27922a95121de8ea1d",
+              "revision": 1,
+              "created_at": "2026-09-23T18:19:42.736793+00:00",
+              "lifecycle": "active",
+              "change_reason": "created",
+              "payload": {
+                "author": "Jev/typesafe/jev-1.13-20260917",
+                "requires": [],
+                "kind": "assessment",
+                "claim": {
+                  "record_id": "542083cb38cb4d5280373b14badea1c4",
+                  "revision": 1
+                },
+                "observation": {
+                  "record_id": "181c65d34908406eaded11dce0dea769",
+                  "revision": 2
+                },
+                "relation": "unknown",
+                "rationale": "Typed Jev assessment under evidence-relation-v1; no generated explanation.",
+                "origin": "jev",
+                "prediction": null,
+                "review": null,
+                "jev": {
+                  "provider": "openrouter",
+                  "model_requested": "~typesafe/jev-latest",
+                  "model_returned": "typesafe/jev-1.13-20260917",
+                  "rubric": "evidence-relation-v1",
+                  "request_sha256": "17864001c93aa91600ad3f998416c5f11bf7785125da5a35e0d4b04b9d072b18",
+                  "probabilities": {
+                    "conflicts": 0.0,
+                    "neutral": 0.01,
+                    "supports": 0.0,
+                    "unknown": 0.99
+                  },
+                  "confidence": 0.99,
+                  "latency_ms": 638.0707272328436
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "status": "completed",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.310646+00:00\",\"id\":\"c9407156f5ea49b994b14273584bebc9\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"542083cb38cb4d5280373b14badea1c4\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"181c65d34908406eaded11dce0dea769\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:21.168709+00:00\",\"id\":\"e42443f324434a8ab651007d40a02fe2\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"542083cb38cb4d5280373b14badea1c4\",\"revision\":1},\"jev\":{\"confidence\":0.95,\"latency_ms\":1854.8687878064811,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.01,\"supports\":0.96,\"unknown\":0.03},\"provider\":\"openrouter\",\"request_sha256\":\"d046b5ce6dce31c0951ae99257b953d5a19bd1ac6fb3510511f81927cd3ed4d8\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"181c65d34908406eaded11dce0dea769\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"5911ad4871384197a51d37f67a7a4928\",\"claims\":[{\"assessment_ids\":[\"c9407156f5ea49b994b14273584bebc9\",\"e42443f324434a8ab651007d40a02fe2\"],\"id\":\"542083cb38cb4d5280373b14badea1c4\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":1,\"missing_pairs\":0,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.308549+00:00\",\"id\":\"181c65d34908406eaded11dce0dea769\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":4},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.308505+00:00\",\"id\":\"542083cb38cb4d5280373b14badea1c4\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.308549+00:00\",\"id\":\"181c65d34908406eaded11dce0dea769\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.310646+00:00\",\"id\":\"c9407156f5ea49b994b14273584bebc9\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"542083cb38cb4d5280373b14badea1c4\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"181c65d34908406eaded11dce0dea769\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":3}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"Evidence is limited to one synthetic same-scope inspection; the Jev model assessment is fallible and not independent evidence, but it does not override the direct observation. No applicable contrary evidence is present.\",\"reason\":\"The active claim that the key is present in process P at T is directly supported by the active same-scope observation reporting a direct presence inspection with key_present=true. Both active assessments on that observation also support the claim, and there is no active contrary evidence or refutation.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:42.736793+00:00\",\"id\":\"bd09e497b1d44b27922a95121de8ea1d\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"542083cb38cb4d5280373b14badea1c4\",\"revision\":1},\"jev\":{\"confidence\":0.99,\"latency_ms\":638.0707272328436,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.01,\"supports\":0.0,\"unknown\":0.99},\"provider\":\"openrouter\",\"request_sha256\":\"17864001c93aa91600ad3f998416c5f11bf7785125da5a35e0d4b04b9d072b18\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"181c65d34908406eaded11dce0dea769\",\"revision\":2},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"unknown\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"5911ad4871384197a51d37f67a7a4928\",\"claims\":[{\"assessment_ids\":[\"bd09e497b1d44b27922a95121de8ea1d\"],\"id\":\"542083cb38cb4d5280373b14badea1c4\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"untested\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":1,\"missing_pairs\":0,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[{\"id\":\"c9407156f5ea49b994b14273584bebc9\",\"reasons\":[\"superseded_or_missing:181c65d34908406eaded11dce0dea769@1\"]},{\"id\":\"e42443f324434a8ab651007d40a02fe2\",\"reasons\":[\"superseded_or_missing:181c65d34908406eaded11dce0dea769@1\"]}],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"Inspection was of Q\",\"created_at\":\"2026-09-23T18:19:42.095114+00:00\",\"id\":\"181c65d34908406eaded11dce0dea769\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"Q at T\",\"source\":{\"excerpt\":\"Correction: the inspection was of process Q, not P. P was not inspected.\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Wrong process was inspected\"},\"revision\":2}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":6},\"new_events\":[{\"record\":{\"change_reason\":\"Inspection was of Q\",\"created_at\":\"2026-09-23T18:19:42.095114+00:00\",\"id\":\"181c65d34908406eaded11dce0dea769\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"Q at T\",\"source\":{\"excerpt\":\"Correction: the inspection was of process Q, not P. P was not inspected.\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Wrong process was inspected\"},\"revision\":2},\"sequence\":5}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"unknown\",\"notes\":\"The prior supporting evidence depended on the observation's old revision (inspection of P); that revision is superseded. The corrected observation (revision 2) is scoped to Q and explicitly states P was not inspected, so it does not bear on P at T. The only remaining active assessment is a fallible model judgment of 'unknown' on the corrected observation and is not independent evidence.\",\"reason\":\"No active applicable evidence affirmatively supports or contradicts the claim that the key is present in process P at T. The direct inspection evidence was corrected to concern process Q, with the source stating P was not inspected, and the claim remains untested.\"}"
+        }
+      ]
+    },
+    {
+      "case": 2,
+      "arm": "notes",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "Two active, same-scope observations (P at T) independently report key_present=true with no stated limitations, and active host assessments link each observation as supporting the current claim. No active evidence contrary to the claim is present.",
+            "notes": "Current claim: record 10bd5126be91417b96544d603c67cd9f, revision 1, active, scope 'P at T'. Supporting observations: 183ff7d690084dbf85e210aa9422a0ba (group first) and c6618ec83fff4a0fb53e87383c2a2d2b (group second), both active, revision 1, observed_at 2026-09-23T00:00:00+00:00, no limitations. Host assessments 72d0a72b1f1a4c14abbf462a78ee14e0 and 55a712b96b3448b1988c313911a90565 are active and relation 'supports'. Assessments are interpretive and fallible, but the direct observation records provide applicable affirmative evidence."
+          },
+          "usage": {
+            "prompt_tokens": 1010,
+            "completion_tokens": 502,
+            "total_tokens": 1512,
+            "cost": 0.0003487176
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 12734.127688221633,
+          "input_sha256": "5b7da9cf22b64eb23b09a9b38bddf8e1ac1ef232a0b63315fb497453fae8e69f"
+        },
+        {
+          "turn": 1,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "One active, same-scope independent observation reports key_present=true with no stated limitations, and an active host assessment supports the claim from that observation. The other supporting observation was withdrawn, and its dependent assessment is stale. No active evidence contrary to the claim is present.",
+            "notes": "Current claim: record 10bd5126be91417b96544d603c67cd9f, revision 1, active, scope 'P at T'. Observation 183ff7d690084dbf85e210aa9422a0ba is now withdrawn at revision 2, so its prior revision 1 is replaced and no longer active evidence. Assessment 72d0a72b1f1a4c14abbf462a78ee14e0 depends on that withdrawn revision 1 and is therefore stale. Remaining applicable evidence: observation c6618ec83fff4a0fb53e87383c2a2d2b, active revision 1, same scope 'P at T', observed_at 2026-09-23T00:00:00+00:00, no stated limitations, reporting key_present=true; and assessment 55a712b96b3448b1988c313911a90565, active, relation 'supports', linking that observation to the claim. The assessment is interpretive and fallible, but the underlying observation is direct same-scope evidence."
+          },
+          "usage": {
+            "prompt_tokens": 1486,
+            "completion_tokens": 445,
+            "total_tokens": 1931,
+            "cost": 0.000970002
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 30486.89344432205,
+          "input_sha256": "6a5fd5e3bba8f685559070ff567b5630e05f519f916208665ac4f5f40e9d2de2"
+        }
+      ],
+      "jev_runs": [],
+      "status": "completed",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.336804+00:00\",\"id\":\"10bd5126be91417b96544d603c67cd9f\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.336847+00:00\",\"id\":\"183ff7d690084dbf85e210aa9422a0ba\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.336873+00:00\",\"id\":\"c6618ec83fff4a0fb53e87383c2a2d2b\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Independent inspection: process=P, time=T, key_present=true\",\"group\":\"second\",\"locator\":\"fixture://independent\",\"method\":\"Independent synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":3},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.339067+00:00\",\"id\":\"72d0a72b1f1a4c14abbf462a78ee14e0\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"10bd5126be91417b96544d603c67cd9f\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"183ff7d690084dbf85e210aa9422a0ba\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":4},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.339112+00:00\",\"id\":\"55a712b96b3448b1988c313911a90565\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"10bd5126be91417b96544d603c67cd9f\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"c6618ec83fff4a0fb53e87383c2a2d2b\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":5}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"Current claim: record 10bd5126be91417b96544d603c67cd9f, revision 1, active, scope 'P at T'. Supporting observations: 183ff7d690084dbf85e210aa9422a0ba (group first) and c6618ec83fff4a0fb53e87383c2a2d2b (group second), both active, revision 1, observed_at 2026-09-23T00:00:00+00:00, no limitations. Host assessments 72d0a72b1f1a4c14abbf462a78ee14e0 and 55a712b96b3448b1988c313911a90565 are active and relation 'supports'. Assessments are interpretive and fallible, but the direct observation records provide applicable affirmative evidence.\",\"reason\":\"Two active, same-scope observations (P at T) independently report key_present=true with no stated limitations, and active host assessments link each observation as supporting the current claim. No active evidence contrary to the claim is present.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"new_events\":[{\"record\":{\"change_reason\":\"First instrument was invalid; second independent check remains valid\",\"created_at\":\"2026-09-23T18:19:32.076351+00:00\",\"id\":\"183ff7d690084dbf85e210aa9422a0ba\",\"lifecycle\":\"withdrawn\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":2},\"sequence\":6}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"Current claim: record 10bd5126be91417b96544d603c67cd9f, revision 1, active, scope 'P at T'. Observation 183ff7d690084dbf85e210aa9422a0ba is now withdrawn at revision 2, so its prior revision 1 is replaced and no longer active evidence. Assessment 72d0a72b1f1a4c14abbf462a78ee14e0 depends on that withdrawn revision 1 and is therefore stale. Remaining applicable evidence: observation c6618ec83fff4a0fb53e87383c2a2d2b, active revision 1, same scope 'P at T', observed_at 2026-09-23T00:00:00+00:00, no stated limitations, reporting key_present=true; and assessment 55a712b96b3448b1988c313911a90565, active, relation 'supports', linking that observation to the claim. The assessment is interpretive and fallible, but the underlying observation is direct same-scope evidence.\",\"reason\":\"One active, same-scope independent observation reports key_present=true with no stated limitations, and an active host assessment supports the claim from that observation. The other supporting observation was withdrawn, and its dependent assessment is stale. No active evidence contrary to the claim is present.\"}"
+        }
+      ]
+    },
+    {
+      "case": 2,
+      "arm": "ledger",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "The current claim that the key is present in process P at T is supported by two active, same-scope observations from independent source groups, both reporting key_present=true. Active assessments link each observation to the claim as supporting evidence. No active contrary evidence or refutations are present.",
+            "notes": "Evidence is limited to synthetic fixture observations at the stated scope P at T; no credential validity or broader inference is made. Assessments are attributed judgments, not probabilities of truth."
+          },
+          "usage": {
+            "prompt_tokens": 1909,
+            "completion_tokens": 189,
+            "total_tokens": 2098,
+            "cost": 0.000791505
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 9748.91011416912,
+          "input_sha256": "3518cb2b707541b69b02d2dcb8b83a1e1ccba1813ffc1fc23a15fbbac577c2d6"
+        },
+        {
+          "turn": 1,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "The current claim that the key is present in process P at T remains supported by one active, same-scope observation from an independent source group, which reports key_present=true. The active assessment links that observation to the claim as supporting evidence. The earlier same-scope observation and its supporting assessment have been withdrawn/invalidated, so they no longer contribute. No active contrary evidence or refutation is present.",
+            "notes": "Evidence is limited to a synthetic independent inspection at scope P at T; this does not establish broader presence or credential validity. Assessments are attributed judgments, not probabilities of truth."
+          },
+          "usage": {
+            "prompt_tokens": 2892,
+            "completion_tokens": 224,
+            "total_tokens": 3116,
+            "cost": 0.0004939704
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 30601.294702850282,
+          "input_sha256": "2824fdc1dd3e1c893008e687b51913551679c2dbac6ef986d3267efcc8346202"
+        }
+      ],
+      "jev_runs": [],
+      "status": "completed",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.352378+00:00\",\"id\":\"81272321170144208d486d0359dbdd77\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"2e8f818e6fc24b1fa4272c6f45973027\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"d21eb343096e4080ac5988604c95e04e\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.352422+00:00\",\"id\":\"23dd4d55dc04415faf467dc8cc351881\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"2e8f818e6fc24b1fa4272c6f45973027\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"01191a8b43904813ba9120350527e01c\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"f9ca51e650aa4fd4b841f844058cf70b\",\"claims\":[{\"assessment_ids\":[\"81272321170144208d486d0359dbdd77\",\"23dd4d55dc04415faf467dc8cc351881\"],\"id\":\"2e8f818e6fc24b1fa4272c6f45973027\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":2,\"missing_pairs\":0,\"possible_pairs\":2},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.350051+00:00\",\"id\":\"d21eb343096e4080ac5988604c95e04e\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.350084+00:00\",\"id\":\"01191a8b43904813ba9120350527e01c\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Independent inspection: process=P, time=T, key_present=true\",\"group\":\"second\",\"locator\":\"fixture://independent\",\"method\":\"Independent synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":5},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.350012+00:00\",\"id\":\"2e8f818e6fc24b1fa4272c6f45973027\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.350051+00:00\",\"id\":\"d21eb343096e4080ac5988604c95e04e\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.350084+00:00\",\"id\":\"01191a8b43904813ba9120350527e01c\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Independent inspection: process=P, time=T, key_present=true\",\"group\":\"second\",\"locator\":\"fixture://independent\",\"method\":\"Independent synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":3},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.352378+00:00\",\"id\":\"81272321170144208d486d0359dbdd77\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"2e8f818e6fc24b1fa4272c6f45973027\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"d21eb343096e4080ac5988604c95e04e\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":4},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.352422+00:00\",\"id\":\"23dd4d55dc04415faf467dc8cc351881\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"2e8f818e6fc24b1fa4272c6f45973027\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"01191a8b43904813ba9120350527e01c\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":5}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"Evidence is limited to synthetic fixture observations at the stated scope P at T; no credential validity or broader inference is made. Assessments are attributed judgments, not probabilities of truth.\",\"reason\":\"The current claim that the key is present in process P at T is supported by two active, same-scope observations from independent source groups, both reporting key_present=true. Active assessments link each observation to the claim as supporting evidence. No active contrary evidence or refutations are present.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.352422+00:00\",\"id\":\"23dd4d55dc04415faf467dc8cc351881\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"2e8f818e6fc24b1fa4272c6f45973027\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"01191a8b43904813ba9120350527e01c\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"f9ca51e650aa4fd4b841f844058cf70b\",\"claims\":[{\"assessment_ids\":[\"23dd4d55dc04415faf467dc8cc351881\"],\"id\":\"2e8f818e6fc24b1fa4272c6f45973027\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":1,\"missing_pairs\":0,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[{\"id\":\"d21eb343096e4080ac5988604c95e04e\",\"reasons\":[\"withdrawn\"]},{\"id\":\"81272321170144208d486d0359dbdd77\",\"reasons\":[\"superseded_or_missing:d21eb343096e4080ac5988604c95e04e@1\"]}],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.350084+00:00\",\"id\":\"01191a8b43904813ba9120350527e01c\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Independent inspection: process=P, time=T, key_present=true\",\"group\":\"second\",\"locator\":\"fixture://independent\",\"method\":\"Independent synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":6},\"new_events\":[{\"record\":{\"change_reason\":\"First instrument was invalid; second independent check remains valid\",\"created_at\":\"2026-09-23T18:19:29.104432+00:00\",\"id\":\"d21eb343096e4080ac5988604c95e04e\",\"lifecycle\":\"withdrawn\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":2},\"sequence\":6}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"Evidence is limited to a synthetic independent inspection at scope P at T; this does not establish broader presence or credential validity. Assessments are attributed judgments, not probabilities of truth.\",\"reason\":\"The current claim that the key is present in process P at T remains supported by one active, same-scope observation from an independent source group, which reports key_present=true. The active assessment links that observation to the claim as supporting evidence. The earlier same-scope observation and its supporting assessment have been withdrawn/invalidated, so they no longer contribute. No active contrary evidence or refutation is present.\"}"
+        }
+      ]
+    },
+    {
+      "case": 2,
+      "arm": "ledger_jev",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "The current claim is supported by two active, same-scope observations: both direct and independent inspections of process P at time T report key_present=true. Active assessments from host and Jev classify both observations as supporting the claim, with no active contrary assessments, invalidations, or refutations. The observations have no listed limitations, though they are synthetic fixture records.",
+            "notes": "Applicable affirmative evidence is present and uncontested in the active record. Model assessments are fallible and do not by themselves establish truth; however, the underlying observations directly address the claim's scope. No evidence for the key being absent at P at T is active."
+          },
+          "usage": {
+            "prompt_tokens": 2615,
+            "completion_tokens": 291,
+            "total_tokens": 2906,
+            "cost": 0.0004834368
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 18561.746117193252,
+          "input_sha256": "a25e818185aac5124f7f1ea4b0c1308f8b1741e1f7d63198b67c2f7c4e8b7144"
+        }
+      ],
+      "jev_runs": [
+        {
+          "usage": {
+            "input_tokens": 1183,
+            "output_tokens": 93,
+            "cost": 4.9686e-05
+          },
+          "latency_ms": 1522.2486327402294,
+          "records": [
+            {
+              "id": "05cb328e7c7548799ea5c86d42f181bf",
+              "revision": 1,
+              "created_at": "2026-09-23T18:19:20.890990+00:00",
+              "lifecycle": "active",
+              "change_reason": "created",
+              "payload": {
+                "author": "Jev/typesafe/jev-1.13-20260917",
+                "requires": [],
+                "kind": "assessment",
+                "claim": {
+                  "record_id": "6446979f5bb04826858ae6110fdd886d",
+                  "revision": 1
+                },
+                "observation": {
+                  "record_id": "03dc8aa63e484539a716b21a8e511a4b",
+                  "revision": 1
+                },
+                "relation": "supports",
+                "rationale": "Typed Jev assessment under evidence-relation-v1; no generated explanation.",
+                "origin": "jev",
+                "prediction": null,
+                "review": null,
+                "jev": {
+                  "provider": "openrouter",
+                  "model_requested": "~typesafe/jev-latest",
+                  "model_returned": "typesafe/jev-1.13-20260917",
+                  "rubric": "evidence-relation-v1",
+                  "request_sha256": "2cc07aa2e61e8b96e83ebb1eee673ebcaa6a1bda1a6303169fbfdfa8ac768667",
+                  "probabilities": {
+                    "supports": 0.93,
+                    "unknown": 0.05,
+                    "conflicts": 0.0,
+                    "neutral": 0.02
+                  },
+                  "confidence": 0.9,
+                  "latency_ms": 1522.2486327402294
+                }
+              }
+            },
+            {
+              "id": "39712d0f34f04ffa8042f34d09027238",
+              "revision": 1,
+              "created_at": "2026-09-23T18:19:20.891054+00:00",
+              "lifecycle": "active",
+              "change_reason": "created",
+              "payload": {
+                "author": "Jev/typesafe/jev-1.13-20260917",
+                "requires": [],
+                "kind": "assessment",
+                "claim": {
+                  "record_id": "6446979f5bb04826858ae6110fdd886d",
+                  "revision": 1
+                },
+                "observation": {
+                  "record_id": "1cd9d53fca1b494fa95d0425867620e4",
+                  "revision": 1
+                },
+                "relation": "supports",
+                "rationale": "Typed Jev assessment under evidence-relation-v1; no generated explanation.",
+                "origin": "jev",
+                "prediction": null,
+                "review": null,
+                "jev": {
+                  "provider": "openrouter",
+                  "model_requested": "~typesafe/jev-latest",
+                  "model_returned": "typesafe/jev-1.13-20260917",
+                  "rubric": "evidence-relation-v1",
+                  "request_sha256": "2cc07aa2e61e8b96e83ebb1eee673ebcaa6a1bda1a6303169fbfdfa8ac768667",
+                  "probabilities": {
+                    "supports": 0.99,
+                    "unknown": 0.01,
+                    "conflicts": 0.0,
+                    "neutral": 0.0
+                  },
+                  "confidence": 0.98,
+                  "latency_ms": 1522.2486327402294
+                }
+              }
+            }
+          ]
+        },
+        {
+          "usage": {
+            "input_tokens": 742,
+            "output_tokens": 48,
+            "cost": 3.1164e-05
+          },
+          "latency_ms": 1701.8987191841006,
+          "records": [
+            {
+              "id": "369f115e714443d488d89b28320a6935",
+              "revision": 1,
+              "created_at": "2026-09-23T18:19:41.162944+00:00",
+              "lifecycle": "active",
+              "change_reason": "created",
+              "payload": {
+                "author": "Jev/typesafe/jev-1.13-20260917",
+                "requires": [],
+                "kind": "assessment",
+                "claim": {
+                  "record_id": "6446979f5bb04826858ae6110fdd886d",
+                  "revision": 1
+                },
+                "observation": {
+                  "record_id": "1cd9d53fca1b494fa95d0425867620e4",
+                  "revision": 1
+                },
+                "relation": "supports",
+                "rationale": "Typed Jev assessment under evidence-relation-v1; no generated explanation.",
+                "origin": "jev",
+                "prediction": null,
+                "review": null,
+                "jev": {
+                  "provider": "openrouter",
+                  "model_requested": "~typesafe/jev-latest",
+                  "model_returned": "typesafe/jev-1.13-20260917",
+                  "rubric": "evidence-relation-v1",
+                  "request_sha256": "d23e3ddecba5db0a07009de96b635dc50305c70ae420e51c71226aeaf72e4c01",
+                  "probabilities": {
+                    "supports": 1.0,
+                    "unknown": 0.0,
+                    "neutral": 0.0,
+                    "conflicts": 0.0
+                  },
+                  "confidence": 0.99,
+                  "latency_ms": 1701.8987191841006
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "status": "failed",
+      "failure_turn": 1,
+      "error_type": "ValidationError",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.365383+00:00\",\"id\":\"ed5069d945c84eb7adcede74c9b01018\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"6446979f5bb04826858ae6110fdd886d\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"03dc8aa63e484539a716b21a8e511a4b\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.365436+00:00\",\"id\":\"34fe0a57823f40dd8b73ac9e9c95e64c\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"6446979f5bb04826858ae6110fdd886d\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"1cd9d53fca1b494fa95d0425867620e4\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:20.890990+00:00\",\"id\":\"05cb328e7c7548799ea5c86d42f181bf\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"6446979f5bb04826858ae6110fdd886d\",\"revision\":1},\"jev\":{\"confidence\":0.9,\"latency_ms\":1522.2486327402294,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.02,\"supports\":0.93,\"unknown\":0.05},\"provider\":\"openrouter\",\"request_sha256\":\"2cc07aa2e61e8b96e83ebb1eee673ebcaa6a1bda1a6303169fbfdfa8ac768667\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"03dc8aa63e484539a716b21a8e511a4b\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:20.891054+00:00\",\"id\":\"39712d0f34f04ffa8042f34d09027238\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"6446979f5bb04826858ae6110fdd886d\",\"revision\":1},\"jev\":{\"confidence\":0.98,\"latency_ms\":1522.2486327402294,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.0,\"supports\":0.99,\"unknown\":0.01},\"provider\":\"openrouter\",\"request_sha256\":\"2cc07aa2e61e8b96e83ebb1eee673ebcaa6a1bda1a6303169fbfdfa8ac768667\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"1cd9d53fca1b494fa95d0425867620e4\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"d1db60f0f19745558911dbe834f222e0\",\"claims\":[{\"assessment_ids\":[\"ed5069d945c84eb7adcede74c9b01018\",\"34fe0a57823f40dd8b73ac9e9c95e64c\",\"05cb328e7c7548799ea5c86d42f181bf\",\"39712d0f34f04ffa8042f34d09027238\"],\"id\":\"6446979f5bb04826858ae6110fdd886d\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":2,\"missing_pairs\":0,\"possible_pairs\":2},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.363293+00:00\",\"id\":\"03dc8aa63e484539a716b21a8e511a4b\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.363322+00:00\",\"id\":\"1cd9d53fca1b494fa95d0425867620e4\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Independent inspection: process=P, time=T, key_present=true\",\"group\":\"second\",\"locator\":\"fixture://independent\",\"method\":\"Independent synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":7},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.363256+00:00\",\"id\":\"6446979f5bb04826858ae6110fdd886d\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.363293+00:00\",\"id\":\"03dc8aa63e484539a716b21a8e511a4b\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.363322+00:00\",\"id\":\"1cd9d53fca1b494fa95d0425867620e4\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Independent inspection: process=P, time=T, key_present=true\",\"group\":\"second\",\"locator\":\"fixture://independent\",\"method\":\"Independent synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":3},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.365383+00:00\",\"id\":\"ed5069d945c84eb7adcede74c9b01018\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"6446979f5bb04826858ae6110fdd886d\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"03dc8aa63e484539a716b21a8e511a4b\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":4},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.365436+00:00\",\"id\":\"34fe0a57823f40dd8b73ac9e9c95e64c\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"6446979f5bb04826858ae6110fdd886d\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"1cd9d53fca1b494fa95d0425867620e4\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":5}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"Applicable affirmative evidence is present and uncontested in the active record. Model assessments are fallible and do not by themselves establish truth; however, the underlying observations directly address the claim's scope. No evidence for the key being absent at P at T is active.\",\"reason\":\"The current claim is supported by two active, same-scope observations: both direct and independent inspections of process P at time T report key_present=true. Active assessments from host and Jev classify both observations as supporting the claim, with no active contrary assessments, invalidations, or refutations. The observations have no listed limitations, though they are synthetic fixture records.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.365436+00:00\",\"id\":\"34fe0a57823f40dd8b73ac9e9c95e64c\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"6446979f5bb04826858ae6110fdd886d\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"1cd9d53fca1b494fa95d0425867620e4\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:20.891054+00:00\",\"id\":\"39712d0f34f04ffa8042f34d09027238\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"6446979f5bb04826858ae6110fdd886d\",\"revision\":1},\"jev\":{\"confidence\":0.98,\"latency_ms\":1522.2486327402294,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.0,\"supports\":0.99,\"unknown\":0.01},\"provider\":\"openrouter\",\"request_sha256\":\"2cc07aa2e61e8b96e83ebb1eee673ebcaa6a1bda1a6303169fbfdfa8ac768667\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"1cd9d53fca1b494fa95d0425867620e4\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:41.162944+00:00\",\"id\":\"369f115e714443d488d89b28320a6935\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"6446979f5bb04826858ae6110fdd886d\",\"revision\":1},\"jev\":{\"confidence\":0.99,\"latency_ms\":1701.8987191841006,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.0,\"supports\":1.0,\"unknown\":0.0},\"provider\":\"openrouter\",\"request_sha256\":\"d23e3ddecba5db0a07009de96b635dc50305c70ae420e51c71226aeaf72e4c01\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"1cd9d53fca1b494fa95d0425867620e4\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"d1db60f0f19745558911dbe834f222e0\",\"claims\":[{\"assessment_ids\":[\"34fe0a57823f40dd8b73ac9e9c95e64c\",\"39712d0f34f04ffa8042f34d09027238\",\"369f115e714443d488d89b28320a6935\"],\"id\":\"6446979f5bb04826858ae6110fdd886d\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":1,\"missing_pairs\":0,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[{\"id\":\"03dc8aa63e484539a716b21a8e511a4b\",\"reasons\":[\"withdrawn\"]},{\"id\":\"ed5069d945c84eb7adcede74c9b01018\",\"reasons\":[\"superseded_or_missing:03dc8aa63e484539a716b21a8e511a4b@1\"]},{\"id\":\"05cb328e7c7548799ea5c86d42f181bf\",\"reasons\":[\"superseded_or_missing:03dc8aa63e484539a716b21a8e511a4b@1\"]}],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.363322+00:00\",\"id\":\"1cd9d53fca1b494fa95d0425867620e4\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Independent inspection: process=P, time=T, key_present=true\",\"group\":\"second\",\"locator\":\"fixture://independent\",\"method\":\"Independent synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":9},\"new_events\":[{\"record\":{\"change_reason\":\"First instrument was invalid; second independent check remains valid\",\"created_at\":\"2026-09-23T18:19:39.456701+00:00\",\"id\":\"03dc8aa63e484539a716b21a8e511a4b\",\"lifecycle\":\"withdrawn\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":2},\"sequence\":8}],\"task\":\"Update your notes and assess the current claim.\"}"
+        }
+      ]
+    },
+    {
+      "case": 3,
+      "arm": "notes",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "The active observation directly reports a same-scope presence inspection for process P at time T with key_present=true. The active claim is supported by this applicable affirmative evidence, and there is no active contrary evidence.",
+            "notes": "Claim record 2f4a531dcad54657b1a7e0a96e876f73 revision 1 is active. Observation record 349ff57888834369af840de04be181f5 revision 1 is active, scope P at T, with no stated limitations. Assessment record a7f7ad1861ef435ca63e7e69114b2a07 revision 1 supports the claim based on that observation."
+          },
+          "usage": {
+            "prompt_tokens": 665,
+            "completion_tokens": 388,
+            "total_tokens": 1053,
+            "cost": 0.000658449
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 11645.347667858005,
+          "input_sha256": "4a93f5f461308e84584a76634674e42a146237b2b569e7fe40b024bf7e5443a8"
+        },
+        {
+          "turn": 1,
+          "expected": "unknown",
+          "correct": true,
+          "answer": {
+            "conclusion": "unknown",
+            "reason": "No active evidence addresses credential validity or acceptance by the service at T. The prior presence observation is not probative for the materially changed claim, so there is no sufficient applicable evidence for either support or contradiction.",
+            "notes": "Claim record 2f4a531dcad54657b1a7e0a96e876f73 revision 2 is active, replacing revision 1. It now asserts credential validity/acceptance by the service at T, which is materially different from the prior presence assertion. Observation 349ff57888834369af840de04be181f5 (direct presence inspection, key_present=true) is scope-consistent but only addresses key presence; it does not establish credential validity or service acceptance. Assessment a7f7ad1861ef435ca63e7e69114b2a07 supported revision 1 and does not apply to the new wording."
+          },
+          "usage": {
+            "prompt_tokens": 1021,
+            "completion_tokens": 228,
+            "total_tokens": 1249,
+            "cost": 0.0002870505
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 34394.34470515698,
+          "input_sha256": "b000cb9384ce72ca8b95195edc22f3b9940f25be9f8f77bc67ee69f9c51e8177"
+        }
+      ],
+      "jev_runs": [],
+      "status": "completed",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.390983+00:00\",\"id\":\"2f4a531dcad54657b1a7e0a96e876f73\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.391033+00:00\",\"id\":\"349ff57888834369af840de04be181f5\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.393115+00:00\",\"id\":\"a7f7ad1861ef435ca63e7e69114b2a07\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"2f4a531dcad54657b1a7e0a96e876f73\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"349ff57888834369af840de04be181f5\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":3}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"Claim record 2f4a531dcad54657b1a7e0a96e876f73 revision 1 is active. Observation record 349ff57888834369af840de04be181f5 revision 1 is active, scope P at T, with no stated limitations. Assessment record a7f7ad1861ef435ca63e7e69114b2a07 revision 1 supports the claim based on that observation.\",\"reason\":\"The active observation directly reports a same-scope presence inspection for process P at time T with key_present=true. The active claim is supported by this applicable affirmative evidence, and there is no active contrary evidence.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"new_events\":[{\"record\":{\"change_reason\":\"Now asking validity, not presence\",\"created_at\":\"2026-09-23T18:19:31.041379+00:00\",\"id\":\"2f4a531dcad54657b1a7e0a96e876f73\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The credential in process P is valid and accepted by the service at T\"},\"revision\":2},\"sequence\":4}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"unknown\",\"notes\":\"Claim record 2f4a531dcad54657b1a7e0a96e876f73 revision 2 is active, replacing revision 1. It now asserts credential validity/acceptance by the service at T, which is materially different from the prior presence assertion. Observation 349ff57888834369af840de04be181f5 (direct presence inspection, key_present=true) is scope-consistent but only addresses key presence; it does not establish credential validity or service acceptance. Assessment a7f7ad1861ef435ca63e7e69114b2a07 supported revision 1 and does not apply to the new wording.\",\"reason\":\"No active evidence addresses credential validity or acceptance by the service at T. The prior presence observation is not probative for the materially changed claim, so there is no sufficient applicable evidence for either support or contradiction.\"}"
+        }
+      ]
+    },
+    {
+      "case": 3,
+      "arm": "ledger",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "The active claim states the key is present in process P at T. There is an active same-scope observation from a direct presence inspection reporting key_present=true, and an active assessment relating that observation as supporting the claim. No active evidence contradicts the claim.",
+            "notes": "The observation is a synthetic check with no stated limitations, but it remains source-scoped to P at T. The supporting assessment is an attributed judgment and does not independently establish truth; however, it is consistent with the direct observation. No contrary or invalidating evidence is present."
+          },
+          "usage": {
+            "prompt_tokens": 1251,
+            "completion_tokens": 221,
+            "total_tokens": 1472,
+            "cost": 0.000634095
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 13099.13105610758,
+          "input_sha256": "04623f97e226df0ce470baf0b00a3fbf5ce3a16ccbd75b004f0892633920140d"
+        },
+        {
+          "turn": 1,
+          "expected": "unknown",
+          "correct": true,
+          "answer": {
+            "conclusion": "unknown",
+            "reason": "The current claim is revision 2, materially changed to assert that the credential in process P is valid and accepted by the service at T. The only active observation reports key presence in process P at T (key_present=true); it does not address whether the credential is valid or accepted by the service. The prior supporting assessment was invalidated because it targeted the superseded revision, and no active assessment supports the new wording. There is no sufficient applicable evidence for the current claim.",
+            "notes": "Presence of a key does not establish credential validity or service acceptance. The observation is same-scope only as to presence at P/T and has no stated limitations but remains limited to what it reports. No contrary evidence is active either; the correct assessment is unknown rather than contested or supported."
+          },
+          "usage": {
+            "prompt_tokens": 2000,
+            "completion_tokens": 294,
+            "total_tokens": 2294,
+            "cost": 0.000471636
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 34683.05703625083,
+          "input_sha256": "0f5b9c35d8dfad2ef7cb0b04d94e6015e2f46732c0eada289a55e98bcae85607"
+        }
+      ],
+      "jev_runs": [],
+      "status": "completed",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.406251+00:00\",\"id\":\"5552eab5abfe4f2c8d41cee3429ad7a7\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"02a2b6bb31c247c08e2dea28f386fd21\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"7c953227309d47cab898bb5d7fa0171e\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"eb329363fa224fada2f5238922d0d07f\",\"claims\":[{\"assessment_ids\":[\"5552eab5abfe4f2c8d41cee3429ad7a7\"],\"id\":\"02a2b6bb31c247c08e2dea28f386fd21\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":1,\"missing_pairs\":0,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.404182+00:00\",\"id\":\"7c953227309d47cab898bb5d7fa0171e\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":3},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.404131+00:00\",\"id\":\"02a2b6bb31c247c08e2dea28f386fd21\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.404182+00:00\",\"id\":\"7c953227309d47cab898bb5d7fa0171e\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.406251+00:00\",\"id\":\"5552eab5abfe4f2c8d41cee3429ad7a7\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"02a2b6bb31c247c08e2dea28f386fd21\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"7c953227309d47cab898bb5d7fa0171e\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":3}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"The observation is a synthetic check with no stated limitations, but it remains source-scoped to P at T. The supporting assessment is an attributed judgment and does not independently establish truth; however, it is consistent with the direct observation. No contrary or invalidating evidence is present.\",\"reason\":\"The active claim states the key is present in process P at T. There is an active same-scope observation from a direct presence inspection reporting key_present=true, and an active assessment relating that observation as supporting the claim. No active evidence contradicts the claim.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[],\"case_id\":\"eb329363fa224fada2f5238922d0d07f\",\"claims\":[{\"assessment_ids\":[],\"id\":\"02a2b6bb31c247c08e2dea28f386fd21\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":2,\"scope\":\"P at T\",\"status\":\"untested\",\"text\":\"The credential in process P is valid and accepted by the service at T\"}],\"coverage\":{\"assessed_pairs\":0,\"missing_pairs\":1,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[{\"id\":\"5552eab5abfe4f2c8d41cee3429ad7a7\",\"reasons\":[\"superseded_or_missing:02a2b6bb31c247c08e2dea28f386fd21@1\"]}],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.404182+00:00\",\"id\":\"7c953227309d47cab898bb5d7fa0171e\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":4},\"new_events\":[{\"record\":{\"change_reason\":\"Now asking validity, not presence\",\"created_at\":\"2026-09-23T18:19:32.508808+00:00\",\"id\":\"02a2b6bb31c247c08e2dea28f386fd21\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The credential in process P is valid and accepted by the service at T\"},\"revision\":2},\"sequence\":4}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"unknown\",\"notes\":\"Presence of a key does not establish credential validity or service acceptance. The observation is same-scope only as to presence at P/T and has no stated limitations but remains limited to what it reports. No contrary evidence is active either; the correct assessment is unknown rather than contested or supported.\",\"reason\":\"The current claim is revision 2, materially changed to assert that the credential in process P is valid and accepted by the service at T. The only active observation reports key presence in process P at T (key_present=true); it does not address whether the credential is valid or accepted by the service. The prior supporting assessment was invalidated because it targeted the superseded revision, and no active assessment supports the new wording. There is no sufficient applicable evidence for the current claim.\"}"
+        }
+      ]
+    },
+    {
+      "case": 3,
+      "arm": "ledger_jev",
+      "turns": [],
+      "jev_runs": [
+        {
+          "usage": {
+            "input_tokens": 742,
+            "output_tokens": 48,
+            "cost": 3.1164e-05
+          },
+          "latency_ms": 2132.253634277731,
+          "records": [
+            {
+              "id": "7c643b352d23449a9602701d01032426",
+              "revision": 1,
+              "created_at": "2026-09-23T18:19:21.555553+00:00",
+              "lifecycle": "active",
+              "change_reason": "created",
+              "payload": {
+                "author": "Jev/typesafe/jev-1.13-20260917",
+                "requires": [],
+                "kind": "assessment",
+                "claim": {
+                  "record_id": "3d4ce16a86504dea925781112e79fa23",
+                  "revision": 1
+                },
+                "observation": {
+                  "record_id": "877fbba2751346b9bf1883a2d2c5b0b2",
+                  "revision": 1
+                },
+                "relation": "supports",
+                "rationale": "Typed Jev assessment under evidence-relation-v1; no generated explanation.",
+                "origin": "jev",
+                "prediction": null,
+                "review": null,
+                "jev": {
+                  "provider": "openrouter",
+                  "model_requested": "~typesafe/jev-latest",
+                  "model_returned": "typesafe/jev-1.13-20260917",
+                  "rubric": "evidence-relation-v1",
+                  "request_sha256": "d046b5ce6dce31c0951ae99257b953d5a19bd1ac6fb3510511f81927cd3ed4d8",
+                  "probabilities": {
+                    "unknown": 0.02,
+                    "supports": 0.97,
+                    "conflicts": 0.0,
+                    "neutral": 0.01
+                  },
+                  "confidence": 0.96,
+                  "latency_ms": 2132.253634277731
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "status": "failed",
+      "failure_turn": 0,
+      "error_type": "ValidationError",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.420119+00:00\",\"id\":\"964ef265c44146ac8b269445d0276736\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"3d4ce16a86504dea925781112e79fa23\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"877fbba2751346b9bf1883a2d2c5b0b2\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:21.555553+00:00\",\"id\":\"7c643b352d23449a9602701d01032426\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"3d4ce16a86504dea925781112e79fa23\",\"revision\":1},\"jev\":{\"confidence\":0.96,\"latency_ms\":2132.253634277731,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.01,\"supports\":0.97,\"unknown\":0.02},\"provider\":\"openrouter\",\"request_sha256\":\"d046b5ce6dce31c0951ae99257b953d5a19bd1ac6fb3510511f81927cd3ed4d8\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"877fbba2751346b9bf1883a2d2c5b0b2\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"2ac59a19d14748819d45457411d14742\",\"claims\":[{\"assessment_ids\":[\"964ef265c44146ac8b269445d0276736\",\"7c643b352d23449a9602701d01032426\"],\"id\":\"3d4ce16a86504dea925781112e79fa23\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":1,\"missing_pairs\":0,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.418058+00:00\",\"id\":\"877fbba2751346b9bf1883a2d2c5b0b2\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":4},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.418018+00:00\",\"id\":\"3d4ce16a86504dea925781112e79fa23\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.418058+00:00\",\"id\":\"877fbba2751346b9bf1883a2d2c5b0b2\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.420119+00:00\",\"id\":\"964ef265c44146ac8b269445d0276736\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"3d4ce16a86504dea925781112e79fa23\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"877fbba2751346b9bf1883a2d2c5b0b2\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":3}],\"task\":\"Update your notes and assess the current claim.\"}"
+        }
+      ]
+    },
+    {
+      "case": 4,
+      "arm": "notes",
+      "turns": [],
+      "jev_runs": [],
+      "status": "failed",
+      "failure_turn": 0,
+      "error_type": "ValidationError",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.439437+00:00\",\"id\":\"63d379b17afd4a358f374608f148d76e\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.439480+00:00\",\"id\":\"59b09fd39e074844960146817a6e1361\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.441597+00:00\",\"id\":\"0e66171e03704c52a28b90901a8408d3\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"63d379b17afd4a358f374608f148d76e\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"59b09fd39e074844960146817a6e1361\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":3}],\"task\":\"Update your notes and assess the current claim.\"}"
+        }
+      ]
+    },
+    {
+      "case": 4,
+      "arm": "ledger",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "The active observation directly inspects process P at time T and reports key_present=true, matching the claim's scope and content. The active assessment links that observation as supporting the claim. No active contrary evidence or refutation is present.",
+            "notes": "Evidence is a synthetic direct presence inspection with no stated limitations. The assessment is an attributed host judgment, but it is consistent with the same-scope observation. No independent contrary evidence appears in the current board."
+          },
+          "usage": {
+            "prompt_tokens": 1245,
+            "completion_tokens": 192,
+            "total_tokens": 1437,
+            "cost": 0.000597861
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 14456.424723844975,
+          "input_sha256": "b734b1be2768553d4530f4e8f02bc12a422f6bc9e11e8aa9a80dc58b12b31701"
+        },
+        {
+          "turn": 1,
+          "expected": "contested",
+          "correct": true,
+          "answer": {
+            "conclusion": "contested",
+            "reason": "There is active applicable evidence both supporting and opposing the claim. Observation 82b374... directly reports key_present=true for process P at time T and is linked by an active supporting assessment. Observation a65edaf... directly reports key_present=false for process P at exactly T and is linked by an active conflicting assessment. The board states neither instrument is known more reliable, and the claim status is contested. No active resolution or refutation resolves the conflict.",
+            "notes": "The supporting and contrary observations are same-scope and independent. The newer contrary observation is equally credible according to its source excerpt, so it does not override the earlier supporting evidence but prevents a supported conclusion. The claim remains contested pending resolution of the conflicting same-time inspections. This is not a probability of truth; it reflects unresolved evidence conflict."
+          },
+          "usage": {
+            "prompt_tokens": 2716,
+            "completion_tokens": 250,
+            "total_tokens": 2966,
+            "cost": 0.000551826
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 36434.22659114003,
+          "input_sha256": "e631442d7c02bb5f8fefb050543ece741a1746467e7dc3146f2e0ae9db97c933"
+        }
+      ],
+      "jev_runs": [],
+      "status": "completed",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.454196+00:00\",\"id\":\"dc08ad6711394fe9abf888634a5353e5\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"871befe9efd045b68e45d8f7dfa5a7ea\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"82b374511df9451c8aca1e85548230a4\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"1feac79e081c483f857a8b07cd18ee19\",\"claims\":[{\"assessment_ids\":[\"dc08ad6711394fe9abf888634a5353e5\"],\"id\":\"871befe9efd045b68e45d8f7dfa5a7ea\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":1,\"missing_pairs\":0,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.452214+00:00\",\"id\":\"82b374511df9451c8aca1e85548230a4\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":3},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.452177+00:00\",\"id\":\"871befe9efd045b68e45d8f7dfa5a7ea\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.452214+00:00\",\"id\":\"82b374511df9451c8aca1e85548230a4\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.454196+00:00\",\"id\":\"dc08ad6711394fe9abf888634a5353e5\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"871befe9efd045b68e45d8f7dfa5a7ea\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"82b374511df9451c8aca1e85548230a4\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":3}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"Evidence is a synthetic direct presence inspection with no stated limitations. The assessment is an attributed host judgment, but it is consistent with the same-scope observation. No independent contrary evidence appears in the current board.\",\"reason\":\"The active observation directly inspects process P at time T and reports key_present=true, matching the claim's scope and content. The active assessment links that observation as supporting the claim. No active contrary evidence or refutation is present.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.454196+00:00\",\"id\":\"dc08ad6711394fe9abf888634a5353e5\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"871befe9efd045b68e45d8f7dfa5a7ea\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"82b374511df9451c8aca1e85548230a4\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:33.916022+00:00\",\"id\":\"fad7273919094dfbb6aea4a8799d1a53\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"871befe9efd045b68e45d8f7dfa5a7ea\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"a65edaf247b44f809687a8fa6de1401a\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Opposing same-time observation; neither source is more reliable\",\"relation\":\"conflicts\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"1feac79e081c483f857a8b07cd18ee19\",\"claims\":[{\"assessment_ids\":[\"dc08ad6711394fe9abf888634a5353e5\",\"fad7273919094dfbb6aea4a8799d1a53\"],\"id\":\"871befe9efd045b68e45d8f7dfa5a7ea\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"contested\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":2,\"missing_pairs\":0,\"possible_pairs\":2},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.452214+00:00\",\"id\":\"82b374511df9451c8aca1e85548230a4\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:33.913642+00:00\",\"id\":\"a65edaf247b44f809687a8fa6de1401a\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Equally credible independent inspection at exactly T: process=P, key_present=false. Neither instrument is known more reliable.\",\"group\":\"contrary\",\"locator\":\"fixture://contrary\",\"method\":\"Synthetic simultaneous independent check\"},\"text\":\"Equally credible check found absence\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":5},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:33.913642+00:00\",\"id\":\"a65edaf247b44f809687a8fa6de1401a\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Equally credible independent inspection at exactly T: process=P, key_present=false. Neither instrument is known more reliable.\",\"group\":\"contrary\",\"locator\":\"fixture://contrary\",\"method\":\"Synthetic simultaneous independent check\"},\"text\":\"Equally credible check found absence\"},\"revision\":1},\"sequence\":4},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:33.916022+00:00\",\"id\":\"fad7273919094dfbb6aea4a8799d1a53\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"871befe9efd045b68e45d8f7dfa5a7ea\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"a65edaf247b44f809687a8fa6de1401a\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Opposing same-time observation; neither source is more reliable\",\"relation\":\"conflicts\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":5}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"contested\",\"notes\":\"The supporting and contrary observations are same-scope and independent. The newer contrary observation is equally credible according to its source excerpt, so it does not override the earlier supporting evidence but prevents a supported conclusion. The claim remains contested pending resolution of the conflicting same-time inspections. This is not a probability of truth; it reflects unresolved evidence conflict.\",\"reason\":\"There is active applicable evidence both supporting and opposing the claim. Observation 82b374... directly reports key_present=true for process P at time T and is linked by an active supporting assessment. Observation a65edaf... directly reports key_present=false for process P at exactly T and is linked by an active conflicting assessment. The board states neither instrument is known more reliable, and the claim status is contested. No active resolution or refutation resolves the conflict.\"}"
+        }
+      ]
+    },
+    {
+      "case": 4,
+      "arm": "ledger_jev",
+      "turns": [
+        {
+          "turn": 0,
+          "expected": "supported",
+          "correct": true,
+          "answer": {
+            "conclusion": "supported",
+            "reason": "Active same-scope observation reports a direct presence inspection at process P, time T with key_present=true. The current claim is exactly that the key is present in process P at T. There is no active evidence against the claim; both active assessments support it, and the observation itself is affirmative applicable evidence.",
+            "notes": "The supporting assessments are attributed judgments and do not themselves establish truth; the key support comes from the active observation. The observation is a synthetic/direct check with no stated limitations, so uncertainty is low but not formally eliminated. No active contrary or invalidating evidence is present."
+          },
+          "usage": {
+            "prompt_tokens": 1608,
+            "completion_tokens": 254,
+            "total_tokens": 1862,
+            "cost": 0.00041991048
+          },
+          "model": "deepseek/deepseek-v4.1-flash",
+          "elapsed_ms_including_queue": 25070.68808283657,
+          "input_sha256": "e08a6df67c39cfb37200f511124c7541e002216ac0200567b21b16069fbdabce"
+        }
+      ],
+      "jev_runs": [
+        {
+          "usage": {
+            "input_tokens": 742,
+            "output_tokens": 48,
+            "cost": 3.1164e-05
+          },
+          "latency_ms": 2285.7730016112328,
+          "records": [
+            {
+              "id": "c063393344eb473aa944fdd2258eb431",
+              "revision": 1,
+              "created_at": "2026-09-23T18:19:21.756315+00:00",
+              "lifecycle": "active",
+              "change_reason": "created",
+              "payload": {
+                "author": "Jev/typesafe/jev-1.13-20260917",
+                "requires": [],
+                "kind": "assessment",
+                "claim": {
+                  "record_id": "19b87c2cca2f4e00a360d2755d0b3437",
+                  "revision": 1
+                },
+                "observation": {
+                  "record_id": "0e5ca4d75af6447396e1306b6a0c5bae",
+                  "revision": 1
+                },
+                "relation": "supports",
+                "rationale": "Typed Jev assessment under evidence-relation-v1; no generated explanation.",
+                "origin": "jev",
+                "prediction": null,
+                "review": null,
+                "jev": {
+                  "provider": "openrouter",
+                  "model_requested": "~typesafe/jev-latest",
+                  "model_returned": "typesafe/jev-1.13-20260917",
+                  "rubric": "evidence-relation-v1",
+                  "request_sha256": "d046b5ce6dce31c0951ae99257b953d5a19bd1ac6fb3510511f81927cd3ed4d8",
+                  "probabilities": {
+                    "neutral": 0.0,
+                    "supports": 0.98,
+                    "unknown": 0.02,
+                    "conflicts": 0.0
+                  },
+                  "confidence": 0.97,
+                  "latency_ms": 2285.7730016112328
+                }
+              }
+            }
+          ]
+        },
+        {
+          "usage": {
+            "input_tokens": 1200,
+            "output_tokens": 94,
+            "cost": 5.04e-05
+          },
+          "latency_ms": 505.9529421851039,
+          "records": [
+            {
+              "id": "7d30398e51ab45c2850bf7254f7dd651",
+              "revision": 1,
+              "created_at": "2026-09-23T18:19:47.342625+00:00",
+              "lifecycle": "active",
+              "change_reason": "created",
+              "payload": {
+                "author": "Jev/typesafe/jev-1.13-20260917",
+                "requires": [],
+                "kind": "assessment",
+                "claim": {
+                  "record_id": "19b87c2cca2f4e00a360d2755d0b3437",
+                  "revision": 1
+                },
+                "observation": {
+                  "record_id": "0e5ca4d75af6447396e1306b6a0c5bae",
+                  "revision": 1
+                },
+                "relation": "supports",
+                "rationale": "Typed Jev assessment under evidence-relation-v1; no generated explanation.",
+                "origin": "jev",
+                "prediction": null,
+                "review": null,
+                "jev": {
+                  "provider": "openrouter",
+                  "model_requested": "~typesafe/jev-latest",
+                  "model_returned": "typesafe/jev-1.13-20260917",
+                  "rubric": "evidence-relation-v1",
+                  "request_sha256": "53f15bf64d754b501597d1ea92f637f1a6fcdb5e67366055d78ae091879252e1",
+                  "probabilities": {
+                    "conflicts": 0.0,
+                    "unknown": 0.02,
+                    "neutral": 0.0,
+                    "supports": 0.98
+                  },
+                  "confidence": 0.97,
+                  "latency_ms": 505.9529421851039
+                }
+              }
+            },
+            {
+              "id": "6bbb7a384a0c479a8f22171331eb6454",
+              "revision": 1,
+              "created_at": "2026-09-23T18:19:47.342700+00:00",
+              "lifecycle": "active",
+              "change_reason": "created",
+              "payload": {
+                "author": "Jev/typesafe/jev-1.13-20260917",
+                "requires": [],
+                "kind": "assessment",
+                "claim": {
+                  "record_id": "19b87c2cca2f4e00a360d2755d0b3437",
+                  "revision": 1
+                },
+                "observation": {
+                  "record_id": "f85e5cdb73214003927598fbe168321a",
+                  "revision": 1
+                },
+                "relation": "conflicts",
+                "rationale": "Typed Jev assessment under evidence-relation-v1; no generated explanation.",
+                "origin": "jev",
+                "prediction": null,
+                "review": null,
+                "jev": {
+                  "provider": "openrouter",
+                  "model_requested": "~typesafe/jev-latest",
+                  "model_returned": "typesafe/jev-1.13-20260917",
+                  "rubric": "evidence-relation-v1",
+                  "request_sha256": "53f15bf64d754b501597d1ea92f637f1a6fcdb5e67366055d78ae091879252e1",
+                  "probabilities": {
+                    "conflicts": 0.95,
+                    "unknown": 0.04,
+                    "neutral": 0.01,
+                    "supports": 0.0
+                  },
+                  "confidence": 0.93,
+                  "latency_ms": 505.9529421851039
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "status": "failed",
+      "failure_turn": 1,
+      "error_type": "ValidationError",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You maintain a short inquiry notebook across turns. Using only active applicable evidence, assess the CURRENT claim. A corrected record replaces its old revision; judgments depending on the old revision are stale. Independent unaffected evidence remains usable. A materially changed claim needs evidence for its new wording. Model assessments are fallible and do not override source scope or content. Return only JSON with conclusion, reason, notes. conclusion must be supported (applicable affirmative evidence with no active contrary evidence), contested (applicable evidence both for and against), or unknown (no sufficient applicable evidence). Do not infer credential validity from presence. Preserve source limitations and uncertainty."
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.467400+00:00\",\"id\":\"6ba14e5759eb415da06165e62e145c51\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"0e5ca4d75af6447396e1306b6a0c5bae\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:21.756315+00:00\",\"id\":\"c063393344eb473aa944fdd2258eb431\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"revision\":1},\"jev\":{\"confidence\":0.97,\"latency_ms\":2285.7730016112328,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.0,\"supports\":0.98,\"unknown\":0.02},\"provider\":\"openrouter\",\"request_sha256\":\"d046b5ce6dce31c0951ae99257b953d5a19bd1ac6fb3510511f81927cd3ed4d8\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"0e5ca4d75af6447396e1306b6a0c5bae\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"2eec6723e41f495b9ab189143199af8d\",\"claims\":[{\"assessment_ids\":[\"6ba14e5759eb415da06165e62e145c51\",\"c063393344eb473aa944fdd2258eb431\"],\"id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"open\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":1,\"missing_pairs\":0,\"possible_pairs\":1},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.465411+00:00\",\"id\":\"0e5ca4d75af6447396e1306b6a0c5bae\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":4},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.465067+00:00\",\"id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"category\":\"explanation\",\"kind\":\"claim\",\"origin\":\"host\",\"requires\":[],\"scope\":\"P at T\",\"text\":\"The key is present in process P at T\"},\"revision\":1},\"sequence\":1},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.465411+00:00\",\"id\":\"0e5ca4d75af6447396e1306b6a0c5bae\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},\"sequence\":2},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.467400+00:00\",\"id\":\"6ba14e5759eb415da06165e62e145c51\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"0e5ca4d75af6447396e1306b6a0c5bae\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":3}],\"task\":\"Update your notes and assess the current claim.\"}"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"conclusion\":\"supported\",\"notes\":\"The supporting assessments are attributed judgments and do not themselves establish truth; the key support comes from the active observation. The observation is a synthetic/direct check with no stated limitations, so uncertainty is low but not formally eliminated. No active contrary or invalidating evidence is present.\",\"reason\":\"Active same-scope observation reports a direct presence inspection at process P, time T with key_present=true. The current claim is exactly that the key is present in process P at T. There is no active evidence against the claim; both active assessments support it, and the observation itself is affirmative applicable evidence.\"}"
+        },
+        {
+          "role": "user",
+          "content": "{\"case\":{\"author\":\"fixture\",\"context\":\"\",\"decision_to_inform\":\"\",\"kind\":\"cause\",\"question\":\"Assess the current claim about P\",\"scope\":\"P at T\"},\"current_board\":{\"assessments\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.467400+00:00\",\"id\":\"6ba14e5759eb415da06165e62e145c51\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"0e5ca4d75af6447396e1306b6a0c5bae\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Initial fixture interpretation from direct same-scope evidence\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:21.756315+00:00\",\"id\":\"c063393344eb473aa944fdd2258eb431\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"revision\":1},\"jev\":{\"confidence\":0.97,\"latency_ms\":2285.7730016112328,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.0,\"supports\":0.98,\"unknown\":0.02},\"provider\":\"openrouter\",\"request_sha256\":\"d046b5ce6dce31c0951ae99257b953d5a19bd1ac6fb3510511f81927cd3ed4d8\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"0e5ca4d75af6447396e1306b6a0c5bae\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:46.832961+00:00\",\"id\":\"b473fb2bb04145aa816230b70572b42d\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"f85e5cdb73214003927598fbe168321a\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Opposing same-time observation; neither source is more reliable\",\"relation\":\"conflicts\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:47.342625+00:00\",\"id\":\"7d30398e51ab45c2850bf7254f7dd651\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"revision\":1},\"jev\":{\"confidence\":0.97,\"latency_ms\":505.9529421851039,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.0,\"neutral\":0.0,\"supports\":0.98,\"unknown\":0.02},\"provider\":\"openrouter\",\"request_sha256\":\"53f15bf64d754b501597d1ea92f637f1a6fcdb5e67366055d78ae091879252e1\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"0e5ca4d75af6447396e1306b6a0c5bae\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"supports\",\"requires\":[],\"review\":null},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:47.342700+00:00\",\"id\":\"6bbb7a384a0c479a8f22171331eb6454\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"Jev/typesafe/jev-1.13-20260917\",\"claim\":{\"record_id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"revision\":1},\"jev\":{\"confidence\":0.93,\"latency_ms\":505.9529421851039,\"model_requested\":\"~typesafe/jev-latest\",\"model_returned\":\"typesafe/jev-1.13-20260917\",\"probabilities\":{\"conflicts\":0.95,\"neutral\":0.01,\"supports\":0.0,\"unknown\":0.04},\"provider\":\"openrouter\",\"request_sha256\":\"53f15bf64d754b501597d1ea92f637f1a6fcdb5e67366055d78ae091879252e1\",\"rubric\":\"evidence-relation-v1\"},\"kind\":\"assessment\",\"observation\":{\"record_id\":\"f85e5cdb73214003927598fbe168321a\",\"revision\":1},\"origin\":\"jev\",\"prediction\":null,\"rationale\":\"Typed Jev assessment under evidence-relation-v1; no generated explanation.\",\"relation\":\"conflicts\",\"requires\":[],\"review\":null},\"revision\":1}],\"case_id\":\"2eec6723e41f495b9ab189143199af8d\",\"claims\":[{\"assessment_ids\":[\"6ba14e5759eb415da06165e62e145c51\",\"c063393344eb473aa944fdd2258eb431\",\"b473fb2bb04145aa816230b70572b42d\",\"7d30398e51ab45c2850bf7254f7dd651\",\"6bbb7a384a0c479a8f22171331eb6454\"],\"id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"invalidation_reasons\":[],\"refutation_ids\":[],\"revision\":1,\"scope\":\"P at T\",\"status\":\"contested\",\"text\":\"The key is present in process P at T\"}],\"coverage\":{\"assessed_pairs\":2,\"missing_pairs\":0,\"possible_pairs\":2},\"coverage_questions\":[\"Could the observation be misleading?\",\"What explanations have we missed?\"],\"decisions\":[],\"invalidated\":[],\"notice\":\"Assessments are attributed judgments. No status or count is a probability of truth.\",\"observations\":[{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:19.465411+00:00\",\"id\":\"0e5ca4d75af6447396e1306b6a0c5bae\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Direct presence inspection: process=P, time=T, key_present=true\",\"group\":\"first\",\"locator\":\"fixture://first\",\"method\":\"Synthetic check\"},\"text\":\"Key presence observed\"},\"revision\":1},{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:46.830620+00:00\",\"id\":\"f85e5cdb73214003927598fbe168321a\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Equally credible independent inspection at exactly T: process=P, key_present=false. Neither instrument is known more reliable.\",\"group\":\"contrary\",\"locator\":\"fixture://contrary\",\"method\":\"Synthetic simultaneous independent check\"},\"text\":\"Equally credible check found absence\"},\"revision\":1}],\"omitted_source_group\":null,\"predictions\":[],\"question\":\"Assess the current claim about P\",\"reframe_needed\":false,\"resolution_state\":\"open\",\"resolutions\":[],\"schema_version\":1,\"sequence\":8},\"new_events\":[{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:46.830620+00:00\",\"id\":\"f85e5cdb73214003927598fbe168321a\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture\",\"kind\":\"observation\",\"limitations\":[],\"observed_at\":\"2026-09-23T00:00:00+00:00\",\"origin\":\"dataset\",\"requires\":[],\"scope\":\"P at T\",\"source\":{\"excerpt\":\"Equally credible independent inspection at exactly T: process=P, key_present=false. Neither instrument is known more reliable.\",\"group\":\"contrary\",\"locator\":\"fixture://contrary\",\"method\":\"Synthetic simultaneous independent check\"},\"text\":\"Equally credible check found absence\"},\"revision\":1},\"sequence\":5},{\"record\":{\"change_reason\":\"created\",\"created_at\":\"2026-09-23T18:19:46.832961+00:00\",\"id\":\"b473fb2bb04145aa816230b70572b42d\",\"lifecycle\":\"active\",\"payload\":{\"author\":\"fixture host\",\"claim\":{\"record_id\":\"19b87c2cca2f4e00a360d2755d0b3437\",\"revision\":1},\"jev\":null,\"kind\":\"assessment\",\"observation\":{\"record_id\":\"f85e5cdb73214003927598fbe168321a\",\"revision\":1},\"origin\":\"host\",\"prediction\":null,\"rationale\":\"Opposing same-time observation; neither source is more reliable\",\"relation\":\"conflicts\",\"requires\":[],\"review\":null},\"revision\":1},\"sequence\":6}],\"task\":\"Update your notes and assess the current claim.\"}"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "notes": {
+      "completed": 3,
+      "total_cases": 4,
+      "initial_correct": 3,
+      "final_correct": 3,
+      "host_reported_cost": 0.0027827494199999998,
+      "host_missing_cost_count": 0,
+      "jev_reported_cost": 0
+    },
+    "ledger": {
+      "completed": 4,
+      "total_cases": 4,
+      "initial_correct": 4,
+      "final_correct": 4,
+      "host_reported_cost": 0.0046652958,
+      "host_missing_cost_count": 0,
+      "jev_reported_cost": 0
+    },
+    "ledger_jev": {
+      "completed": 1,
+      "total_cases": 4,
+      "initial_correct": 3,
+      "final_correct": 1,
+      "host_reported_cost": 0.00179210988,
+      "host_missing_cost_count": 0,
+      "jev_reported_cost": 0.000256116
+    }
+  }
+}

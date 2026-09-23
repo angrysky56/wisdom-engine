@@ -71,6 +71,6 @@ def compare_checks(snapshot: CaseSnapshot) -> dict:
                        'separation_coverage': separating / len(pairs) if check.mutually_exclusive else None,
                        'prediction_coverage': sum(bool(check.predicted_outcomes.get(r.record_id)) for r in check.scenarios)
                                               / len(check.scenarios)})
-    return {'case_id': snapshot.case_id, 'sequence': snapshot.sequence, 'checks': checks,
+    return {'schema_version': 1, 'case_id': snapshot.case_id, 'sequence': snapshot.sequence, 'checks': checks,
             'notice': 'Separation is a heuristic over declared exclusive scenarios, not information gain. '
                       'Only eligible checks are candidates for action; no automatic best check is asserted.'}

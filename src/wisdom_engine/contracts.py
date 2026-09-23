@@ -4,12 +4,22 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, TypeAdapter, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, StringConstraints, TypeAdapter, model_validator
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=16000)]
 Identifier = Annotated[str, StringConstraints(pattern=r'^[A-Za-z0-9_-]{1,80}$')]
 Probability = Annotated[float, Field(ge=0, le=1, allow_inf_nan=False)]
 Relation = Literal['supports', 'conflicts', 'neutral', 'unknown']
+
+
+def timestamp_with_timezone(value: str) -> str:
+    """Preserve the supplied ISO timestamp while rejecting ambiguous or invalid times."""
+    if datetime.fromisoformat(value).tzinfo is None:
+        raise ValueError('Timestamp must include a timezone')
+    return value
+
+
+Timestamp = Annotated[Text, AfterValidator(timestamp_with_timezone)]
 
 
 class StrictModel(BaseModel):
@@ -48,17 +58,10 @@ class Observation(Payload):
     kind: Literal['observation'] = 'observation'
     text: Text
     scope: Text
-    observed_at: Text
+    observed_at: Timestamp
     origin: Literal['human_report', 'tool_result', 'dataset']
     source: Source
     limitations: list[Text] = Field(default_factory=list, max_length=20)
-
-    @model_validator(mode='after')
-    def timestamp(self) -> Observation:
-        if datetime.fromisoformat(self.observed_at).tzinfo is None:
-            raise ValueError('observed_at must include a timezone')
-        return self
-
 
 class Claim(Payload):
     kind: Literal['claim'] = 'claim'
@@ -184,7 +187,7 @@ PAYLOAD = TypeAdapter(RecordPayload)
 class Record(StrictModel):
     id: Identifier
     revision: Annotated[int, Field(ge=1)]
-    created_at: Text
+    created_at: Timestamp
     lifecycle: Literal['active', 'withdrawn'] = 'active'
     change_reason: Text
     payload: RecordPayload

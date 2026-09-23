@@ -217,4 +217,6 @@ The v0.2 record and direct Jev evidence-assessment adapter are implemented. The 
 
 Following Ty's approval of direct Jev integration, a narrow assessor experiment was brought forward independently of specialized generation. The same-author synthetic pilot has 16 cases. Jev scored 16/16 once and 15/16 in a paired run; the generative baseline scored 15/16. This does not meet the independent multi-turn evaluation gates above. Board/check/decision functionality is implemented provisionally so those workflows can be tested; its existence is not a claim that Stages 2–3 passed their effectiveness gates.
 
+A controlled four-case, two-turn notes/ledger/ledger-plus-Jev pilot is also recorded, including both protocol versions and validation failures. In version 2, all valid answers were correct, but corrupted output field names prevented four trajectories from completing. This is not a clean reasoning comparison or evidence that the effectiveness gates passed.
+
 No improvement in real user outcomes is established. The next evaluation is the full notes-versus-record comparison, with and without Jev, using independently reviewed cases and realistic correction/decision sequences. Specialized generation, automatic merging, formal refutation adapters, and learning from outcomes remain deferred.

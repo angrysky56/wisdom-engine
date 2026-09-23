@@ -12,10 +12,12 @@ The original pipeline and 30 regression tests remain in the `legacy` directories
 
 ## Verification
 
-- Current unit/contract suite: see the final `uv run pytest` output for the authoritative count; this report does not treat historical tests as quality evaluation.
+- Current unit/contract suite: 78 tests, including 30 preserved legacy tests. This verifies implementation behavior, not reasoning quality.
 - Offline and live real-stdio demos both create an inquiry, record an assessment, correct the evidence, invalidate the old assessment, restart the server, and verify identical export history.
 - The successful live stdio run returned `typesafe/jev-1.13-20260917`, labelled the synthetic presence/absence pair `conflicts`, and reopened it as `untested` after correction. Provider-reported request cost was $0.00003129 (745 input, 49 output tokens).
-- An initial demo assertion assumed a structured payload for a bare `dict` annotation; the SDK returned text JSON. The adapter now declares `dict[str, Any]` so it advertises structured output schemas, and the demo supports both representations. This was a harness/contract issue, not lost database history.
+- An initial demo assertion assumed a structured payload for a bare `dict` annotation; the SDK returned text JSON. Active tools now use explicit Pydantic output contracts, validated before return and advertised to clients. The demo supports structured content and text JSON. This was a harness/contract issue, not lost database history.
+- Archive timestamps now reject invalid or timezone-free values before any writes. Regression tests reproduced the prior acceptance gap, then verified rejection through storage and the MCP import boundary.
+- Source and wheel builds succeed. The source distribution explicitly includes project files and excludes unrelated workspace tool symlinks and private `.env` files.
 
 ## Live synthetic assessment pilot
 
@@ -35,9 +37,29 @@ No labels or rubrics were changed after seeing these results. Jev's mean multicl
 
 **Interpretation:** the direct adapter works, and Jev was faster and cheaper in this measured comparison. It did not beat the baseline's label accuracy in the paired run. These results justify continued advisory experimentation, not automatic acceptance of model judgments or a claim of improved wisdom.
 
+The original reports retain per-case results. Later reporting adds confusion counts, class recall, macro accuracy (mean recall over represented reference classes), and explicit missing-cost flags. Original raw artifacts were not rewritten.
+
+## Controlled two-turn revision pilot
+
+The separately [registered protocol](../evals/REVISION_PROTOCOL.md) compares notes, a current ledger board, and the ledger with Jev. Each arm uses the same host model, source events, semantic rubric, and four synthetic cases: correction to another process, withdrawing one of two independent sources, changing a claim's meaning, and receiving conflicting evidence. The scripted initial assessments are supplied to every arm. This tests controlled updating rather than autonomous investigation.
+
+Version 1 had four output-validation failures across twelve trajectories. Completed trajectories answered correctly, but the harness did not retain the invalid replies or their costs. That comparison is inconclusive. The [original artifact](../evals/results/20260923T182019550973Z-revision.json) remains unchanged.
+
+Version 2 supplied the existing reply schema explicitly and retained raw replies, validation details, and usage before validation. It repeated every arm with unchanged cases and reference labels. [Full version 2 result](../evals/results/20260923T182630147427Z-revision.json):
+
+| Arm | Correct initial labels | Valid, correct final labels | Invalid final replies | Reported host cost | Jev cost |
+|---|---:|---:|---:|---:|---:|
+| Notes | 4/4 | 2/4 | 2 | $0.002481372432 | — |
+| Ledger | 4/4 | 2/4 | 2 | $0.004075285896 | — |
+| Ledger + Jev | 4/4 | 4/4 | 0 | $0.007217327502 | $0.00028749 |
+
+All 24 version 2 host replies returned usage. Four changed the required `conclusion` key (for example, `conclusion R`), and strict validation correctly rejected them. Their prose was not used to recover or score labels. All schema-valid answers were correct. The observed advantage in completion for the Jev arm does **not** establish a reasoning advantage: failures moved between arms across versions, the sample is tiny, and it is not independently authored or randomized. No further paid rerun was used to seek a favorable result.
+
+Host timings include semaphore queue wait, while the 45-second host timeout starts after acquiring a slot; these figures are not the product adapter's latency contract. The product Jev adapter separately bounds its whole call including queueing. All pilot stores were temporary; no saved user inquiries were modified.
+
 ## Remaining evaluation and product work
 
-- Independently authored/reviewed cases and a full multi-turn comparison against ordinary notes, both with and without Jev.
+- Independently authored/reviewed cases and a full multi-turn comparison against ordinary notes, both with and without Jev. The controlled pilot above does not satisfy this requirement; a future protocol should verify native schema support before scoring all arms.
 - Actual review burden, decision outcomes, representative claim/belief/science cases, and calibrated thresholds if automation is ever proposed.
 - Automatic semantic merging, dedicated deterministic refutation adapters, and optional specialized generation remain unimplemented.
 - Human review and source attribution are trusted local caller reports, not authenticated attestations. Imported archives preserve those reports, not independent verification.

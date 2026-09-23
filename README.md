@@ -90,7 +90,7 @@ uv run python scripts/stdio_demo.py --live
 
 The first demo exercises an actual stdio subprocess, evidence correction, and restart parity. `--live` adds one paid Jev call using synthetic source text. Ordinary tests use controlled responses and never call a live model.
 
-The opt-in evaluation commands and limitations are in [evals/PROTOCOL.md](evals/PROTOCOL.md). Results are saved with dataset hashes, per-case labels, actual model IDs, timing, and known costs. The small same-author synthetic pilot is not a substitute for independently reviewed real cases.
+The opt-in evaluation commands and limitations are in [evals/PROTOCOL.md](evals/PROTOCOL.md) and the [controlled revision protocol](evals/REVISION_PROTOCOL.md). Results are saved with input hashes, per-case labels, actual model IDs, timing, and known costs. The [development report](docs/DEVELOPMENT_RESULTS.md) retains both successes and output-validation failures. These small same-author synthetic pilots are not substitutes for independently reviewed real cases.
 
 ## Migration from 0.1
 

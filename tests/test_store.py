@@ -119,6 +119,21 @@ def test_export_import_parity_and_tampering(inquiry, tmp_path):
         third.snapshot(case)
 
 
+@pytest.mark.parametrize('timestamp', ['not a date', '2026-09-23', '2026-09-23T00:00:00'])
+@pytest.mark.parametrize('target', ['case', 'record'])
+def test_invalid_import_timestamp_rejected_atomically(inquiry, tmp_path, timestamp, target):
+    store, case, _, _ = inquiry
+    bundle = store.export_case(case)
+    if target == 'case':
+        bundle['created_at'] = timestamp
+    else:
+        bundle['events'][0]['record']['created_at'] = timestamp
+    destination = Store(tmp_path / 'timestamps.sqlite3')
+    with pytest.raises(ValidationError):
+        destination.import_case(bundle, 'invalid-time')
+    assert destination.list_cases()['cases'] == []
+
+
 @pytest.mark.parametrize('payload', [
     {}, {'kind': 'observation', 'origin': 'model'}, {'kind': 'claim', 'text': ''},
     {'kind': 'prediction', 'necessary': 'false'}, ['not an object'],
